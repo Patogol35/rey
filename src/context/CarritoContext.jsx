@@ -72,7 +72,7 @@ export function CarritoProvider({ children }) {
   };
 
   // =====================
-  // 🔥 AGREGAR AL CARRITO (VARIANTES OK)
+  // 🔥 AGREGAR AL CARRITO (FIX REAL)
   // =====================
   const agregarAlCarrito = async (
     producto_id,
@@ -82,11 +82,12 @@ export function CarritoProvider({ children }) {
     if (!access) throw new Error("Debes iniciar sesión.");
 
     try {
+      // 🔥 🔥 🔥 AQUÍ ESTABA EL BUG
       const nuevoItem = await apiAgregar(
         producto_id,
-        variante_id,
-        cantidad,
-        access
+        cantidad,     // ✔ correcto
+        access,       // ✔ token
+        variante_id   // ✔ variante
       );
 
       setCarrito((prev) => {
@@ -151,7 +152,7 @@ export function CarritoProvider({ children }) {
   const limpiarLocal = () => setCarrito({ items: [] });
 
   // =====================
-  // 💰 TOTAL (OPCIONAL PRO)
+  // 💰 TOTAL
   // =====================
   const total = useMemo(() => {
     return carrito.items.reduce(
