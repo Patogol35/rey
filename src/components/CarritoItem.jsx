@@ -29,26 +29,26 @@ export default function CarritoItem({
   const producto = it.producto;
   const variante = it.variante || {};
 
-  // 📦 STOCK
   const stock = variante?.stock ?? producto?.stock ?? 0;
 
-  // 💰 PRECIO UNITARIO
-  const precioUnitario =
-    variante?.precio ?? producto?.precio ?? 0;
-
-  // 🖼 IMAGEN
   const imagen =
     variante?.imagenes?.[0]?.imagen ||
     producto?.imagenes?.[0]?.imagen ||
     producto?.imagen ||
     "/placeholder.png";
 
-  // 🧠 VARIANTE LABEL
+  // ✅ FIX AQUÍ
+  const altTexto = variante
+    ? `${producto?.nombre} ${variante.color || ""}`
+    : producto?.nombre;
+
   const varianteLabel = [variante.talla, variante.color, variante.modelo]
     .filter(Boolean)
     .join(" - ");
 
-  // 🗑 ELIMINAR CON TOAST
+  const precioUnitario =
+    variante?.precio ?? producto?.precio ?? 0;
+
   const handleEliminar = () => {
     eliminarItem(it.id);
     toast.info("Producto eliminado 🗑️");
@@ -56,15 +56,13 @@ export default function CarritoItem({
 
   return (
     <Card sx={carritoItemStyles.card}>
-      {/* IMAGEN */}
       <CardMedia
         component="img"
         image={imagen}
-        alt={producto.nombre}
+        alt={altTexto}
         sx={(theme) => carritoItemStyles.media(theme)}
       />
 
-      {/* INFO */}
       <CardContent sx={carritoItemStyles.content}>
         <Box>
           <Typography variant="h6" fontWeight="bold">
@@ -77,7 +75,6 @@ export default function CarritoItem({
             </Typography>
           )}
 
-          {/* 💰 PRECIO UNITARIO */}
           <Stack direction="row" spacing={1} alignItems="center" mt={1}>
             <MonetizationOnIcon fontSize="small" color="primary" />
             <Typography variant="body2" fontWeight="bold">
@@ -86,12 +83,11 @@ export default function CarritoItem({
           </Stack>
         </Box>
 
-        {/* 🔥 SUBTOTAL (VOLVIMOS A LA FUNCIÓN ORIGINAL) */}
+        {/* 🔥 USAMOS TU FUNCIÓN ORIGINAL */}
         <Stack direction="row" spacing={1}>
           <Chip
             label={`Subtotal: $${calcularSubtotal(it).toFixed(2)}`}
             color="success"
-            sx={carritoItemStyles.chipSubtotal}
           />
 
           <Chip
@@ -101,7 +97,6 @@ export default function CarritoItem({
         </Stack>
       </CardContent>
 
-      {/* CONTROLES */}
       <Box sx={carritoItemStyles.controlesWrapper}>
         <Box sx={carritoItemStyles.cantidadWrapper}>
           <IconButton
@@ -143,20 +138,6 @@ export default function CarritoItem({
           </IconButton>
         </Box>
 
-        {/* 🟥 ELIMINAR PRO */}
+        {/* 🟥 BOTÓN ELIMINAR */}
         <IconButton
-          onClick={handleEliminar}
-          sx={{
-            color: "#d32f2f",
-            "&:hover": {
-              backgroundColor: "rgba(211,47,47,0.1)",
-              transform: "scale(1.1)",
-            },
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Box>
-    </Card>
-  );
-}
+          onClick={handle
