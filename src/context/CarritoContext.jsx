@@ -15,6 +15,9 @@ export function CarritoProvider({ children }) {
   const [carrito, setCarrito] = useState({ items: [] });
   const [loading, setLoading] = useState(false);
 
+  // =====================
+  // 🔄 CARGAR CARRITO
+  // =====================
   const cargarCarrito = async () => {
     if (!access) {
       setCarrito({ items: [] });
@@ -46,7 +49,6 @@ export function CarritoProvider({ children }) {
 
     try {
       const res = await apiSetCantidad(itemId, cantidad, access);
-      const cantidadFinal = res?.cantidad ?? cantidad;
 
       setCarrito((prev) => ({
         ...prev,
@@ -54,8 +56,7 @@ export function CarritoProvider({ children }) {
           it.id === itemId
             ? {
                 ...it,
-                cantidad: cantidadFinal,
-                subtotal: cantidadFinal * it.producto.precio,
+                cantidad: res.cantidad, // 🔥 usar backend
               }
             : it
         ),
@@ -63,13 +64,15 @@ export function CarritoProvider({ children }) {
     } catch (e) {
       console.error(e);
       toast.error(
-        e?.response?.data?.error || e.message || "No se pudo actualizar la cantidad"
+        e?.response?.data?.error ||
+          e.message ||
+          "No se pudo actualizar la cantidad"
       );
     }
   };
 
   // =====================
-  // 🔥 AGREGAR AL CARRITO (FIX VARIANTES)
+  // 🔥 AGREGAR AL CARRITO (VARIANTES OK)
   // =====================
   const agregarAlCarrito = async (
     producto_id,
@@ -81,29 +84,37 @@ export function CarritoProvider({ children }) {
     try {
       const nuevoItem = await apiAgregar(
         producto_id,
+        variante_id,
         cantidad,
-        access,
-        variante_id // 🔥 AQUÍ ESTÁ EL FIX
+        access
       );
 
       setCarrito((prev) => {
-        // 🔥 clave: evitar duplicados (producto + variante)
-        const items = prev.items.filter(
+        const index = prev.items.findIndex(
           (it) =>
-            !(
-              it.producto.id === nuevoItem.producto.id &&
-              (it.variante?.id || null) === (nuevoItem.variante?.id || null)
-            )
+            it.producto.id === nuevoItem.producto.id &&
+            (it.variante?.id || null) ===
+              (nuevoItem.variante?.id || null)
         );
 
-        return { ...prev, items: [...items, nuevoItem] };
+        // 🔥 si ya existe → actualizar
+        if (index !== -1) {
+          const updated = [...prev.items];
+          updated[index] = nuevoItem;
+          return { ...prev, items: updated };
+        }
+
+        // 🔥 si no existe → agregar
+        return { ...prev, items: [...prev.items, nuevoItem] };
       });
 
       toast.success("Producto agregado 🛒");
     } catch (e) {
       console.error(e);
       toast.error(
-        e?.response?.data?.error || e.message || "No se pudo agregar el producto"
+        e?.response?.data?.error ||
+          e.message ||
+          "No se pudo agregar el producto"
       );
       throw e;
     }
@@ -127,20 +138,33 @@ export function CarritoProvider({ children }) {
     } catch (e) {
       console.error(e);
       toast.error(
-        e?.response?.data?.error || e.message || "No se pudo eliminar el producto"
+        e?.response?.data?.error ||
+          e.message ||
+          "No se pudo eliminar el producto"
       );
     }
   };
 
   // =====================
-  // 🧹 LIMPIAR LOCAL
+  // 🧹 LIMPIAR
   // =====================
   const limpiarLocal = () => setCarrito({ items: [] });
+
+  // =====================
+  // 💰 TOTAL (OPCIONAL PRO)
+  // =====================
+  const total = useMemo(() => {
+    return carrito.items.reduce(
+      (acc, it) => acc + (it.subtotal || 0),
+      0
+    );
+  }, [carrito]);
 
   const value = useMemo(
     () => ({
       carrito,
       items: carrito.items || [],
+      total,
       loading,
       cargarCarrito,
       agregarAlCarrito,
@@ -148,7 +172,7 @@ export function CarritoProvider({ children }) {
       eliminarItem,
       limpiarLocal,
     }),
-    [carrito, loading]
+    [carrito, loading, total]
   );
 
   return (
