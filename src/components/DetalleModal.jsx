@@ -8,12 +8,15 @@ import {
   Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useState, useEffect, useMemo } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import detalleModalStyles from "./DetalleModal.styles";
+
+// 🔥 IMPORTANTE: reutilizar estilo del card
+import { botonAgregarSx } from "../components/ProductoCard.styles"; // ajusta ruta
 
 export default function DetalleModal({
   producto,
@@ -44,6 +47,17 @@ export default function DetalleModal({
 
     return [...new Set(imgs)];
   }, [producto, varianteSeleccionada]);
+
+  // 🔥 STOCK TOTAL (igual que card)
+  const stockTotal = useMemo(() => {
+    if (!producto.variantes || producto.variantes.length === 0) {
+      return 1;
+    }
+    return producto.variantes.reduce(
+      (acc, v) => acc + (v.stock || 0),
+      0
+    );
+  }, [producto]);
 
   // Reset al abrir
   useEffect(() => {
@@ -146,7 +160,6 @@ export default function DetalleModal({
                           `2px solid ${theme.palette.primary.main}`
                       : (theme) =>
                           `1px solid ${theme.palette.divider}`,
-                  transition: "all 0.2s ease",
                 }}
               />
             ))}
@@ -215,42 +228,30 @@ export default function DetalleModal({
           </Stack>
         )}
 
-        {/* BOTÓN FIJO */}
-        <Box
-          sx={{
-            width: "100%",
-            position: "sticky",
-            bottom: 0,
-            backgroundColor: (theme) =>
-              theme.palette.background.paper,
-            pt: 2,
-          }}
-        >
+        {/* BOTÓN (MISMO QUE CARD) */}
+        <Box sx={{ width: "100%", mt: 2 }}>
           <Button
             variant="contained"
             fullWidth
-            startIcon={<ShoppingCartIcon />}
+            startIcon={<AddShoppingCartIcon />}
             onClick={handleAgregar}
+            sx={botonAgregarSx(stockTotal)}
             disabled={
               tieneVariantes
                 ? !varianteSeleccionada ||
                   varianteSeleccionada.stock === 0
-                : false
+                : stockTotal === 0
             }
-            sx={{
-              py: 1.5,
-              fontWeight: "bold",
-              borderRadius: 2,
-              textTransform: "none",
-              backgroundColor: (theme) =>
-                theme.palette.primary.main,
-              "&:hover": {
-                backgroundColor: (theme) =>
-                  theme.palette.primary.dark,
-              },
-            }}
           >
-            Agregar al carrito
+            {tieneVariantes
+              ? varianteSeleccionada
+                ? varianteSeleccionada.stock > 0
+                  ? "Agregar al carrito"
+                  : "Agotado"
+                : "Seleccionar opciones"
+              : stockTotal > 0
+              ? "Agregar al carrito"
+              : "Agotado"}
           </Button>
         </Box>
       </Stack>
