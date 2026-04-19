@@ -8,6 +8,7 @@ import {
   Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useState, useEffect, useMemo } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
@@ -32,12 +33,10 @@ export default function DetalleModal({
   // 🖼 IMÁGENES DINÁMICAS
   // =========================
   const imagenes = useMemo(() => {
-    // 🔥 Si hay variante seleccionada → usar sus imágenes
     if (varianteSeleccionada?.imagenes?.length > 0) {
       return varianteSeleccionada.imagenes.map((img) => img.imagen);
     }
 
-    // 🔥 fallback a imágenes generales
     const imgs = [
       producto.imagen,
       ...(producto.imagenes?.map((img) => img.imagen) || []),
@@ -46,14 +45,14 @@ export default function DetalleModal({
     return [...new Set(imgs)];
   }, [producto, varianteSeleccionada]);
 
-  // 🔥 Reset al abrir modal
+  // Reset al abrir
   useEffect(() => {
     if (open) {
       setVarianteSeleccionada(null);
     }
   }, [open]);
 
-  // 🔥 Cambiar imagen al cambiar variante
+  // Cambiar imagen según variante
   useEffect(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
       setImagenActiva(varianteSeleccionada.imagenes[0].imagen);
@@ -143,8 +142,11 @@ export default function DetalleModal({
                   cursor: "pointer",
                   border:
                     imagenSegura === img
-                      ? "2px solid #1976d2"
-                      : "1px solid #777",
+                      ? (theme) =>
+                          `2px solid ${theme.palette.primary.main}`
+                      : (theme) =>
+                          `1px solid ${theme.palette.divider}`,
+                  transition: "all 0.2s ease",
                 }}
               />
             ))}
@@ -189,6 +191,8 @@ export default function DetalleModal({
                     disabled={v.stock === 0}
                     sx={{
                       opacity: v.stock === 0 ? 0.5 : 1,
+                      textTransform: "none",
+                      borderRadius: 2,
                     }}
                   >
                     {label || "Única"} ({v.stock})
@@ -211,22 +215,44 @@ export default function DetalleModal({
           </Stack>
         )}
 
-        {/* BOTÓN */}
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleAgregar}
-          disabled={
-            tieneVariantes
-              ? !varianteSeleccionada ||
-                varianteSeleccionada.stock === 0
-              : false
-          }
+        {/* BOTÓN FIJO */}
+        <Box
+          sx={{
+            width: "100%",
+            position: "sticky",
+            bottom: 0,
+            backgroundColor: (theme) =>
+              theme.palette.background.paper,
+            pt: 2,
+          }}
         >
-          {tieneVariantes
-            ? "Agregar con selección"
-            : "Agregar al carrito"}
-        </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<ShoppingCartIcon />}
+            onClick={handleAgregar}
+            disabled={
+              tieneVariantes
+                ? !varianteSeleccionada ||
+                  varianteSeleccionada.stock === 0
+                : false
+            }
+            sx={{
+              py: 1.5,
+              fontWeight: "bold",
+              borderRadius: 2,
+              textTransform: "none",
+              backgroundColor: (theme) =>
+                theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: (theme) =>
+                  theme.palette.primary.dark,
+              },
+            }}
+          >
+            Agregar al carrito
+          </Button>
+        </Box>
       </Stack>
     </Dialog>
   );
