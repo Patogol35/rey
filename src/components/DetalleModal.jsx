@@ -31,25 +31,15 @@ export default function DetalleModal({
   const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
   const [colorSeleccionado, setColorSeleccionado] = useState(null);
 
-  // 🔥 obtener variantes
   const variantes = producto.variantes || [];
 
-  // 🔥 tallas únicas
+  // 🔹 tallas únicas
   const tallas = [...new Set(variantes.map((v) => v.talla))];
 
-  // 🔥 colores según talla
-  const colores = useMemo(() => {
-    if (!tallaSeleccionada) return [];
-    return [
-      ...new Set(
-        variantes
-          .filter((v) => v.talla === tallaSeleccionada)
-          .map((v) => v.color)
-      ),
-    ];
-  }, [tallaSeleccionada, variantes]);
+  // 🔹 colores únicos (todos)
+  const colores = [...new Set(variantes.map((v) => v.color))];
 
-  // 🔥 variante seleccionada final
+  // 🔹 variante final
   const varianteSeleccionada = useMemo(() => {
     return variantes.find(
       (v) =>
@@ -58,7 +48,7 @@ export default function DetalleModal({
     );
   }, [tallaSeleccionada, colorSeleccionado, variantes]);
 
-  // 🔥 imágenes dinámicas
+  // 🔹 imágenes
   const imagenes = useMemo(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
       return varianteSeleccionada.imagenes.map((img) => img.imagen);
@@ -72,7 +62,7 @@ export default function DetalleModal({
     return [...new Set(imgs)];
   }, [producto, varianteSeleccionada]);
 
-  // reset
+  // 🔹 reset al abrir
   useEffect(() => {
     if (open) {
       setTallaSeleccionada(null);
@@ -80,7 +70,7 @@ export default function DetalleModal({
     }
   }, [open]);
 
-  // imagen activa
+  // 🔹 imagen activa
   useEffect(() => {
     if (imagenes.length > 0) {
       setImagenActiva(imagenes[0]);
@@ -88,7 +78,6 @@ export default function DetalleModal({
   }, [imagenes]);
 
   const imagenSegura = imagenActiva || "/placeholder.png";
-
   const stockDisponible = varianteSeleccionada?.stock || 0;
 
   // 🛒 agregar
@@ -161,8 +150,10 @@ export default function DetalleModal({
                   cursor: "pointer",
                   border:
                     imagenSegura === img
-                      ? "2px solid #1976d2"
-                      : "1px solid #777",
+                      ? (theme) =>
+                          `2px solid ${theme.palette.primary.main}`
+                      : (theme) =>
+                          `1px solid ${theme.palette.divider}`,
                 }}
               />
             ))}
@@ -191,7 +182,7 @@ export default function DetalleModal({
                 variant={tallaSeleccionada === t ? "contained" : "outlined"}
                 onClick={() => {
                   setTallaSeleccionada(t);
-                  setColorSeleccionado(null);
+                  setColorSeleccionado(null); // 🔥 SIEMPRE reset
                 }}
               >
                 {t}
@@ -201,16 +192,21 @@ export default function DetalleModal({
         </Stack>
 
         {/* COLORES */}
-        {tallaSeleccionada && (
-          <Stack spacing={1} alignItems="center">
-            <Typography fontWeight="bold">Color</Typography>
+        <Stack spacing={1} alignItems="center">
+          <Typography fontWeight="bold">Color</Typography>
 
-            <Stack direction="row" gap={1}>
-              {colores.map((c) => (
+          <Stack direction="row" gap={1}>
+            {colores.map((c) => {
+              const disponible = variantes.some(
+                (v) => v.talla === tallaSeleccionada && v.color === c
+              );
+
+              return (
                 <Button
                   key={c}
                   variant={colorSeleccionado === c ? "contained" : "outlined"}
                   onClick={() => setColorSeleccionado(c)}
+                  disabled={!tallaSeleccionada || !disponible}
                   sx={{ textTransform: "none" }}
                 >
                   <Box
@@ -224,10 +220,10 @@ export default function DetalleModal({
                   />
                   {c}
                 </Button>
-              ))}
-            </Stack>
+              );
+            })}
           </Stack>
-        )}
+        </Stack>
 
         {/* STOCK */}
         {varianteSeleccionada && (
@@ -266,4 +262,4 @@ export default function DetalleModal({
       </Stack>
     </Dialog>
   );
-            }
+}
