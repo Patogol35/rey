@@ -14,8 +14,6 @@ import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import detalleModalStyles from "./DetalleModal.styles";
-
-// 🔥 reutilizamos el estilo del card
 import { botonAgregarSx } from "../components/ProductoCard.styles";
 
 export default function DetalleModal({
@@ -195,39 +193,56 @@ export default function DetalleModal({
             )}
 
             <Stack direction="row" flexWrap="wrap" gap={1}>
-              {producto.variantes.map((v) => (
-                <Button
-                  key={v.id}
-                  variant={
-                    varianteSeleccionada?.id === v.id
-                      ? "contained"
-                      : "outlined"
-                  }
-                  onClick={() => setVarianteSeleccionada(v)}
-                  disabled={v.stock === 0}
-                  sx={{
-                    opacity: v.stock === 0 ? 0.5 : 1,
-                    textTransform: "none",
-                    borderRadius: 2,
-                    display: "flex",
-                    gap: 0.5,
-                    alignItems: "center",
-                  }}
-                >
-                  {/* 🔥 ATRIBUTOS DINÁMICOS */}
-                  {[v.talla, v.color, v.modelo, v.capacidad]
-                    .filter(Boolean)
-                    .map((attr, i) => (
-                      <Chip
-                        key={i}
-                        label={attr}
-                        size="small"
-                      />
-                    ))}
+              {producto.variantes.map((v) => {
+                const isSelected = varianteSeleccionada?.id === v.id;
 
-                  ({v.stock})
-                </Button>
-              ))}
+                return (
+                  <Button
+                    key={v.id}
+                    variant={isSelected ? "contained" : "outlined"}
+                    onClick={() => setVarianteSeleccionada(v)}
+                    disabled={v.stock === 0}
+                    sx={(theme) => ({
+                      opacity: v.stock === 0 ? 0.4 : 1,
+                      textTransform: "none",
+                      borderRadius: 2,
+                      display: "flex",
+                      gap: 0.5,
+                      alignItems: "center",
+
+                      // 🔥 VISIBILIDAD SIEMPRE
+                      border: `1px solid ${theme.palette.primary.main}`,
+                      color: isSelected
+                        ? theme.palette.primary.contrastText
+                        : theme.palette.primary.main,
+                      backgroundColor: isSelected
+                        ? theme.palette.primary.main
+                        : "transparent",
+
+                      "&:hover": {
+                        backgroundColor: isSelected
+                          ? theme.palette.primary.dark
+                          : theme.palette.action.hover,
+                      },
+                    })}
+                  >
+                    {/* 🔥 ATRIBUTOS */}
+                    {[v.talla, v.color, v.modelo, v.capacidad]
+                      .filter(Boolean)
+                      .map((attr, i) => (
+                        <Chip
+                          key={i}
+                          label={attr}
+                          size="small"
+                          sx={{
+                            backgroundColor: "rgba(255,255,255,0.15)",
+                            color: "inherit",
+                          }}
+                        />
+                      ))}
+                  </Button>
+                );
+              })}
             </Stack>
 
             {/* 📦 STOCK VARIANTE */}
