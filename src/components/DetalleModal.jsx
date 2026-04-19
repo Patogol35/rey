@@ -3,9 +3,9 @@ import {
   Typography,
   Stack,
   IconButton,
-  Chip,
   Dialog,
   Button,
+  Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect, useMemo } from "react";
@@ -26,15 +26,13 @@ export default function DetalleModal({
   if (!producto) return null;
 
   // =========================
-  // 🖼 IMÁGENES
+  // 🖼 IMÁGENES (NORMALIZADAS)
   // =========================
   const imagenes = useMemo(() => {
     const imgs = [
       producto.imagen,
-      ...(Array.isArray(producto.imagenes) ? producto.imagenes : []),
-    ]
-      .map((img) => (typeof img === "string" ? img : img?.imagen))
-      .filter(Boolean);
+      ...(producto.imagenes?.map((img) => img.imagen) || []),
+    ].filter(Boolean);
 
     return [...new Set(imgs)];
   }, [producto]);
@@ -49,10 +47,14 @@ export default function DetalleModal({
     }
   }, [open, imagenes]);
 
-  const imagenSegura = imagenActiva || imagenes[0] || "";
+  const imagenSegura = imagenActiva || imagenes[0] || "/placeholder.png";
 
   const tieneVariantes =
     producto.variantes && producto.variantes.length > 0;
+
+  const tieneStockVariantes = producto.variantes?.some(
+    (v) => v.stock > 0
+  );
 
   // =========================
   // 🛒 AGREGAR
@@ -64,7 +66,7 @@ export default function DetalleModal({
     }
 
     if (tieneVariantes && !varianteSeleccionada) {
-      toast.error("Selecciona talla o color");
+      toast.error("Selecciona una variante");
       return;
     }
 
@@ -72,13 +74,13 @@ export default function DetalleModal({
       await agregarAlCarrito(
         producto.id,
         1,
-        varianteSeleccionada?.id || null // 🔥 CLAVE
+        varianteSeleccionada?.id || null
       );
 
       toast.success("Producto agregado ✅");
       onClose();
     } catch (e) {
-      toast.error(e.message);
+      toast.error(e.message || "Error al agregar");
     }
   };
 
@@ -91,28 +93,26 @@ export default function DetalleModal({
       sx={detalleModalStyles.dialog}
       PaperProps={{ sx: detalleModalStyles.dialogPaper }}
     >
+      {/* Cerrar */}
       <IconButton onClick={onClose} sx={detalleModalStyles.botonCerrar}>
         <CloseIcon />
       </IconButton>
 
       <Stack spacing={3} alignItems="center">
-
-        {/* IMAGEN */}
-        {imagenSegura ? (
+        {/* =========================
+            🖼 IMAGEN PRINCIPAL
+        ========================= */}
+        <Box
+          sx={detalleModalStyles.sliderBox}
+          onClick={() => setLightbox && setLightbox(imagenSegura)}
+        >
           <Box
-            sx={detalleModalStyles.sliderBox}
-            onClick={() => setLightbox && setLightbox(imagenSegura)}
-          >
-            <Box
-              component="img"
-              src={imagenSegura}
-              alt={producto.nombre}
-              sx={detalleModalStyles.imagen}
-            />
-          </Box>
-        ) : (
-          <Typography>No hay imagen</Typography>
-        )}
+            component="img"
+            src={imagenSegura}
+            alt={producto.nombre}
+            sx={detalleModalStyles.imagen}
+          />
+        </Box>
 
         {/* MINIATURAS */}
         {imagenes.length > 1 && (
@@ -126,6 +126,8 @@ export default function DetalleModal({
                 sx={{
                   width: 55,
                   height: 55,
+                  objectFit: "cover",
+                  borderRadius: 1,
                   cursor: "pointer",
                   border:
                     imagenSegura === img
@@ -137,50 +139,74 @@ export default function DetalleModal({
           </Stack>
         )}
 
-        {/* INFO */}
+        {/* =========================
+            📄 INFO
+        ========================= */}
         <Box textAlign="center">
           <Typography variant="h5" fontWeight="bold">
             {producto.nombre}
           </Typography>
 
-          <Typography>{producto.descripcion}</Typography>
+          <Typography sx={{ mt: 1 }}>
+            {producto.descripcion}
+          </Typography>
         </Box>
 
         {/* =========================
-            🔥 VARIANTES
+            🔥 VARIANTES (MEJOR UX)
         ========================= */}
         {tieneVariantes && (
-          <Stack spacing={1} alignItems="center">
+          <Stack spacing={2} alignItems="center">
             <Typography fontWeight="bold">
-              Selecciona variante:
+              Selecciona una opción:
             </Typography>
 
+            {!tieneStockVariantes && (
+              <Chip label="Sin stock" color="error" />
+            )}
+
             <Stack direction="row" flexWrap="wrap" gap={1}>
-              {producto.variantes.map((v) => (
-                <Button
-                  key={v.id}
-                  variant={
-                    varianteSeleccionada?.id === v.id
-                      ? "contained"
-                      : "outlined"
-                  }
-                  onClick={() => setVarianteSeleccionada(v)}
-                  disabled={v.stock === 0}
-                >
-                  {v.talla || ""} {v.color || ""}
-                </Button>
-              ))}
+              {producto.variantes.map((v) => {
+                const label = `${v.talla || ""} ${v.color || ""}`;
+
+                return (
+                  <Button
+                    key={v.id}
+                    variant={
+                      varianteSeleccionada?.id === v.id
+                        ? "contained"
+                        : "outlined"
+                    }
+                    onClick={() => setVarianteSeleccionada(v)}
+                    disabled={v.stock === 0}
+                    sx={{
+                      opacity: v.stock === 0 ? 0.5 : 1,
+                    }}
+                  >
+                    {label || "Única"} ({v.stock})
+                  </Button>
+                );
+              })}
             </Stack>
           </Stack>
         )}
 
-        {/* BOTÓN */}
+        {/* =========================
+            🛒 BOTÓN
+        ========================= */}
         <Button
           variant="contained"
           fullWidth
           onClick={handleAgregar}
+          disabled={
+            tieneVariantes
+              ? !varianteSeleccionada || !tieneStockVariantes
+              : false
+          }
         >
-          Agregar al carrito
+          {tieneVariantes
+            ? "Agregar con selección"
+            : "Agregar al carrito"}
         </Button>
       </Stack>
     </Dialog>
