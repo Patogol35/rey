@@ -5,7 +5,7 @@ import {
   eliminarDelCarrito as apiEliminar,
   setCantidadItem as apiSetCantidad,
 } from "../api/api";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
 const CarritoContext = createContext();
