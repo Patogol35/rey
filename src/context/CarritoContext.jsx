@@ -45,34 +45,17 @@ export function CarritoProvider({ children }) {
   // =====================
   const setCantidad = async (itemId, cantidad) => {
     if (!access) throw new Error("Debes iniciar sesión.");
-    if (cantidad < 1) return;
 
     try {
-      const res = await apiSetCantidad(itemId, cantidad, access);
-
-      setCarrito((prev) => ({
-        ...prev,
-        items: prev.items.map((it) =>
-          it.id === itemId
-            ? {
-                ...it,
-                cantidad: res.cantidad, // 🔥 usar backend
-              }
-            : it
-        ),
-      }));
+      await apiSetCantidad(itemId, cantidad, access);
+      await cargarCarrito(); // 🔥 sincroniza siempre
     } catch (e) {
-      console.error(e);
-      toast.error(
-        e?.response?.data?.error ||
-          e.message ||
-          "No se pudo actualizar la cantidad"
-      );
+      toast.error(e?.response?.data?.error || "Error al actualizar");
     }
   };
 
   // =====================
-  // 🔥 AGREGAR AL CARRITO (FIX REAL)
+  // 🔥 AGREGAR AL CARRITO
   // =====================
   const agregarAlCarrito = async (
     producto_id,
@@ -82,12 +65,11 @@ export function CarritoProvider({ children }) {
     if (!access) throw new Error("Debes iniciar sesión.");
 
     try {
-      // 🔥 🔥 🔥 AQUÍ ESTABA EL BUG
       const nuevoItem = await apiAgregar(
         producto_id,
-        cantidad,     // ✔ correcto
-        access,       // ✔ token
-        variante_id   // ✔ variante
+        cantidad,
+        access,
+        variante_id
       );
 
       setCarrito((prev) => {
@@ -98,31 +80,24 @@ export function CarritoProvider({ children }) {
               (nuevoItem.variante?.id || null)
         );
 
-        // 🔥 si ya existe → actualizar
         if (index !== -1) {
           const updated = [...prev.items];
           updated[index] = nuevoItem;
           return { ...prev, items: updated };
         }
 
-        // 🔥 si no existe → agregar
         return { ...prev, items: [...prev.items, nuevoItem] };
       });
 
       toast.success("Producto agregado 🛒");
     } catch (e) {
-      console.error(e);
-      toast.error(
-        e?.response?.data?.error ||
-          e.message ||
-          "No se pudo agregar el producto"
-      );
+      toast.error(e?.response?.data?.error || "Error al agregar");
       throw e;
     }
   };
 
   // =====================
-  // ❌ ELIMINAR
+  // ❌ ELIMINAR ITEM
   // =====================
   const eliminarItem = async (itemId) => {
     if (!access) throw new Error("Debes iniciar sesión.");
@@ -137,19 +112,9 @@ export function CarritoProvider({ children }) {
 
       toast.warn("Producto eliminado 🗑️");
     } catch (e) {
-      console.error(e);
-      toast.error(
-        e?.response?.data?.error ||
-          e.message ||
-          "No se pudo eliminar el producto"
-      );
+      toast.error("Error al eliminar");
     }
   };
-
-  // =====================
-  // 🧹 LIMPIAR
-  // =====================
-  const limpiarLocal = () => setCarrito({ items: [] });
 
   // =====================
   // 💰 TOTAL
@@ -161,23 +126,19 @@ export function CarritoProvider({ children }) {
     );
   }, [carrito]);
 
-  const value = useMemo(
-    () => ({
-      carrito,
-      items: carrito.items || [],
-      total,
-      loading,
-      cargarCarrito,
-      agregarAlCarrito,
-      setCantidad,
-      eliminarItem,
-      limpiarLocal,
-    }),
-    [carrito, loading, total]
-  );
-
   return (
-    <CarritoContext.Provider value={value}>
+    <CarritoContext.Provider
+      value={{
+        carrito,
+        items: carrito.items || [],
+        total,
+        loading,
+        cargarCarrito,
+        agregarAlCarrito,
+        setCantidad,
+        eliminarItem,
+      }}
+    >
       {children}
     </CarritoContext.Provider>
   );
