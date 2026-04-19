@@ -35,9 +35,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
 
-  // =========================
-  // 🔥 IMÁGENES LIMPIAS (SIN DUPLICADOS)
-  // =========================
+  // 🔥 IMÁGENES SIN DUPLICADOS
   const imagenes = useMemo(() => {
     const imgs = [
       producto.imagen,
@@ -47,27 +45,21 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
     return [...new Set(imgs)];
   }, [producto]);
 
-  // 🔥 imagen inicial correcta
   const [imagenActiva, setImagenActiva] = useState(imagenes[0] || "");
 
-  // =========================
   // 🔥 STOCK REAL DESDE VARIANTES
-  // =========================
   const stockTotal = useMemo(() => {
     if (!producto.variantes || producto.variantes.length === 0) return 1;
     return producto.variantes.reduce((acc, v) => acc + (v.stock || 0), 0);
   }, [producto]);
 
-  const tieneVariantes =
-    producto.variantes && producto.variantes.length > 0;
+  const tieneVariantes = producto.variantes?.length > 0;
 
   const tieneStockVariantes = producto.variantes?.some(
     (v) => v.stock > 0
   );
 
-  // =========================
   // 🛒 AGREGAR
-  // =========================
   const onAdd = async () => {
     if (!isAuthenticated) {
       toast.warn("Debes iniciar sesión para agregar productos");
@@ -75,9 +67,9 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       return;
     }
 
-    // 🔥 si tiene variantes → obligar ir a detalle
+    // 🔥 SI TIENE VARIANTES → IR A DETALLE
     if (tieneVariantes) {
-      toast.info("Selecciona talla y color en el detalle 👇");
+      toast.info("Selecciona talla y color 👇");
 
       if (onVerDetalle) {
         onVerDetalle();
@@ -89,13 +81,14 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       return;
     }
 
+    // 🔥 PRODUCTO SIN VARIANTES
     if (onAgregar) {
       onAgregar(producto);
       return;
     }
 
     try {
-      await agregarAlCarrito(producto.id, 1, null);
+      await agregarAlCarrito(producto.id, null, 1); // ✅ CORRECTO
       toast.success(`${producto.nombre} agregado al carrito ✅`);
     } catch (e) {
       toast.error(e.message || "Error al agregar");
@@ -108,7 +101,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       <Box sx={imagenBoxSx}>
         <Box
           component="img"
-          src={imagenActiva || "/placeholder.png"} // 🔥 fallback
+          src={imagenActiva || "/placeholder.png"}
           alt={producto.nombre}
           sx={imagenSx}
         />
@@ -160,7 +153,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
           {producto.nombre}
         </Typography>
 
-        {/* 🔥 Indicador de variantes */}
+        {/* 🔥 INDICADOR VARIANTES */}
         {tieneVariantes && (
           <Chip
             label="Seleccionar talla/color"
@@ -171,12 +164,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
         )}
 
         {/* Precio */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          sx={precioStackSx}
-        >
+        <Stack direction="row" alignItems="center" spacing={0.5} sx={precioStackSx}>
           <MonetizationOnIcon color="primary" />
           <Typography variant="h6" color="primary" fontWeight="bold">
             ${producto.precio}
@@ -189,7 +177,6 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
         <Stack spacing={1}>
           <Button
             variant="contained"
-            color="primary"
             fullWidth
             startIcon={<AddShoppingCartIcon />}
             sx={botonAgregarSx(stockTotal)}
@@ -211,7 +198,6 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
 
           <Button
             variant="outlined"
-            color="inherit"
             fullWidth
             startIcon={<InfoIcon />}
             sx={botonDetallesSx}
@@ -229,4 +215,4 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       </Box>
     </Card>
   );
-}
+          }
