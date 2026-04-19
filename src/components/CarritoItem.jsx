@@ -7,46 +7,50 @@ import {
   Chip,
   TextField,
   IconButton,
+  Stack,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { toast } from "react-toastify";
-import { calcularSubtotal } from "../utils/carritoUtils";
 import carritoItemStyles from "./CarritoItem.styles";
 
 export default function CarritoItem({
   it,
-  theme,
   incrementar,
   decrementar,
   setCantidad,
   eliminarItem,
 }) {
-  // 🔥 STOCK REAL (VARIANTE > PRODUCTO)
+  // 📦 STOCK
   const stock = it.variante?.stock ?? 0;
 
-  // =========================
-  // 🖼 IMAGEN DINÁMICA
-  // =========================
-  const imagen =
-    it.variante?.imagenes?.[0]?.imagen || // 🔥 variante primero
-    it.producto?.imagenes?.[0]?.imagen || // luego imágenes producto
-    it.producto?.imagen || // fallback principal
-    "/placeholder.png"; // último fallback
+  // 💰 PRECIO
+  const precioUnitario = it.variante?.precio ?? it.producto?.precio ?? 0;
+  const subtotal = precioUnitario * it.cantidad;
 
-  const altTexto = it.variante
-    ? `${it.producto?.nombre} ${it.variante.color || ""}`
-    : it.producto?.nombre;
+  // 🖼 IMAGEN
+  const imagen =
+    it.variante?.imagenes?.[0]?.imagen ||
+    it.producto?.imagenes?.[0]?.imagen ||
+    it.producto?.imagen ||
+    "/placeholder.png";
+
+  // 🧠 VARIANTE LABEL
+  const varianteLabel = it.variante
+    ? [it.variante.talla, it.variante.color, it.variante.modelo]
+        .filter(Boolean)
+        .join(" - ")
+    : null;
 
   return (
     <Card sx={carritoItemStyles.card}>
-      {/* Imagen */}
+      {/* IMAGEN */}
       <CardMedia
         component="img"
         image={imagen}
-        alt={altTexto}
+        alt={it.producto?.nombre}
         sx={(theme) => carritoItemStyles.media(theme)}
       />
 
@@ -57,28 +61,26 @@ export default function CarritoItem({
             {it.producto?.nombre}
           </Typography>
 
-          {/* 🔥 VARIANTE */}
-          {it.variante && (
+          {/* VARIANTE */}
+          {varianteLabel && (
             <Typography variant="body2" color="text.secondary">
-              {it.variante.talla && `Talla: ${it.variante.talla}`}{" "}
-              {it.variante.color && `Color: ${it.variante.color}`}
+              {varianteLabel}
             </Typography>
           )}
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={carritoItemStyles.descripcion}
-          >
-            {it.producto?.descripcion}
-          </Typography>
+          {/* PRECIO UNITARIO */}
+          <Stack direction="row" spacing={1} alignItems="center" mt={1}>
+            <MonetizationOnIcon fontSize="small" color="primary" />
+            <Typography variant="body2" fontWeight="bold">
+              ${precioUnitario.toFixed(2)} c/u
+            </Typography>
+          </Stack>
         </Box>
 
-        {/* PRECIO + STOCK */}
-        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+        {/* SUBTOTAL + STOCK */}
+        <Stack direction="row" spacing={1} flexWrap="wrap">
           <Chip
-            icon={<MonetizationOnIcon />}
-            label={`$${calcularSubtotal(it).toFixed(2)}`}
+            label={`Subtotal: $${subtotal.toFixed(2)}`}
             color="success"
             sx={carritoItemStyles.chipSubtotal}
           />
@@ -88,13 +90,12 @@ export default function CarritoItem({
             color={stock > 0 ? "info" : "default"}
             sx={carritoItemStyles.chipStock}
           />
-        </Box>
+        </Stack>
       </CardContent>
 
       {/* CONTROLES */}
       <Box sx={carritoItemStyles.controlesWrapper}>
         <Box sx={carritoItemStyles.cantidadWrapper}>
-          {/* RESTAR */}
           <IconButton
             onClick={() => decrementar(it)}
             disabled={it.cantidad <= 1}
@@ -103,7 +104,6 @@ export default function CarritoItem({
             <RemoveIcon />
           </IconButton>
 
-          {/* INPUT */}
           <TextField
             type="number"
             size="small"
@@ -128,10 +128,13 @@ export default function CarritoItem({
                 setCantidad(it.id, 1);
               }
             }}
-            sx={carritoItemStyles.cantidadInput}
+            sx={{
+              ...carritoItemStyles.cantidadInput,
+              border:
+                it.cantidad >= stock ? "1px solid red" : undefined,
+            }}
           />
 
-          {/* SUMAR */}
           <IconButton
             onClick={() => incrementar(it)}
             disabled={it.cantidad >= stock}
@@ -144,7 +147,13 @@ export default function CarritoItem({
         {/* ELIMINAR */}
         <IconButton
           onClick={() => eliminarItem(it.id)}
-          sx={carritoItemStyles.botonEliminar}
+          sx={{
+            ...carritoItemStyles.botonEliminar,
+            "&:hover": {
+              color: "red",
+              transform: "scale(1.1)",
+            },
+          }}
         >
           <DeleteIcon />
         </IconButton>
