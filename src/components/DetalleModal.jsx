@@ -13,7 +13,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useState, useEffect, useMemo } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom"; // 🔥 NUEVO
+import { useNavigate } from "react-router-dom"; // ✅ IMPORTANTE
 import { toast } from "react-toastify";
 import detalleModalStyles from "./DetalleModal.styles";
 import { botonAgregarSx } from "../components/ProductoCard.styles";
@@ -28,8 +28,9 @@ export default function DetalleModal({
 }) {
   const { agregarAlCarrito } = useCarrito();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate(); // 🔥 NUEVO
+  const navigate = useNavigate(); // ✅
 
+  // 🔥 PROTECCIÓN TOTAL
   if (!producto) return null;
 
   const [imagenActiva, setImagenActiva] = useState("");
@@ -42,8 +43,8 @@ export default function DetalleModal({
     }
 
     const imgs = [
-      producto.imagen,
-      ...(producto.imagenes?.map((img) => img.imagen) || []),
+      producto?.imagen,
+      ...(producto?.imagenes?.map((img) => img.imagen) || []),
     ].filter(Boolean);
 
     return [...new Set(imgs)];
@@ -51,20 +52,22 @@ export default function DetalleModal({
 
   // 📦 STOCK
   const stockTotal = useMemo(() => {
-    if (!producto.variantes?.length) return 1;
+    if (!producto?.variantes?.length) return 1;
+
     return producto.variantes.reduce(
       (acc, v) => acc + (v.stock || 0),
       0
     );
   }, [producto]);
 
-  // 🔥 RESET SOLO CUANDO ABRE EN COMPRA
+  // 🔥 RESET VARIANTE
   useEffect(() => {
     if (open && modo === "compra") {
       setVarianteSeleccionada(null);
     }
   }, [open, modo]);
 
+  // 🔥 IMAGEN ACTIVA
   useEffect(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
       setImagenActiva(varianteSeleccionada.imagenes[0].imagen);
@@ -75,23 +78,25 @@ export default function DetalleModal({
 
   const imagenSegura = imagenActiva || imagenes[0] || "/placeholder.png";
 
-  const tieneVariantes = producto.variantes?.length > 0;
-  const tieneStockVariantes = producto.variantes?.some(
+  const tieneVariantes = producto?.variantes?.length > 0;
+
+  const tieneStockVariantes = producto?.variantes?.some(
     (v) => v.stock > 0
   );
 
   const precioActual =
-    varianteSeleccionada?.precio ?? producto.precio;
+    varianteSeleccionada?.precio ?? producto?.precio;
 
   // 🛒 AGREGAR
   const handleAgregar = async () => {
-    // 🔥 REDIRECCIÓN AL LOGIN
+    // 🔒 REDIRECCIÓN LOGIN
     if (!isAuthenticated) {
       toast.error("Debes iniciar sesión para agregar productos al carrito");
-      navigate("/login"); // 🔥 CLAVE
+      navigate("/login"); // ✅ SIMPLE Y SEGURO
       return;
     }
 
+    // 🔥 VALIDACIÓN VARIANTES
     if (tieneVariantes && !varianteSeleccionada) {
       toast.error("Selecciona una variante");
       return;
@@ -133,7 +138,7 @@ export default function DetalleModal({
           <Box
             component="img"
             src={imagenSegura}
-            alt={producto.nombre}
+            alt={producto?.nombre}
             sx={detalleModalStyles.imagen}
           />
         </Box>
@@ -174,11 +179,11 @@ export default function DetalleModal({
         {/* INFO */}
         <Box textAlign="center">
           <Typography variant="h5" fontWeight="bold">
-            {producto.nombre}
+            {producto?.nombre}
           </Typography>
 
           <Typography sx={{ mt: 1 }}>
-            {producto.descripcion}
+            {producto?.descripcion}
           </Typography>
         </Box>
 
@@ -298,4 +303,4 @@ export default function DetalleModal({
       </Stack>
     </Dialog>
   );
-  }
+            }
