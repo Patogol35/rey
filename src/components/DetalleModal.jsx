@@ -22,6 +22,7 @@ export default function DetalleModal({
   open,
   onClose,
   setLightbox,
+  modo = "compra", // 🔥 NUEVO
 }) {
   const { agregarAlCarrito } = useCarrito();
   const { isAuthenticated } = useAuth();
@@ -54,9 +55,12 @@ export default function DetalleModal({
     );
   }, [producto]);
 
+  // 🔥 RESET SOLO EN MODO COMPRA
   useEffect(() => {
-    if (open) setVarianteSeleccionada(null);
-  }, [open]);
+    if (open && modo === "compra") {
+      setVarianteSeleccionada(null);
+    }
+  }, [open, modo]);
 
   useEffect(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
@@ -76,7 +80,14 @@ export default function DetalleModal({
   const precioActual =
     varianteSeleccionada?.precio ?? producto.precio;
 
+  // 🛒 AGREGAR
   const handleAgregar = async () => {
+    // 🔵 modo info bloquea compra
+    if (modo === "info") {
+      toast.info("Este modo es solo informativo 👀");
+      return;
+    }
+
     if (!isAuthenticated) {
       toast.warn("Debes iniciar sesión");
       return;
@@ -128,7 +139,7 @@ export default function DetalleModal({
           />
         </Box>
 
-        {/* 💰 PRECIO DESTACADO */}
+        {/* 💰 PRECIO */}
         <Stack direction="row" alignItems="center" spacing={1}>
           <AttachMoneyIcon color="success" />
           <Typography
@@ -176,8 +187,8 @@ export default function DetalleModal({
           </Typography>
         </Box>
 
-        {/* VARIANTES */}
-        {tieneVariantes && (
+        {/* 🔥 VARIANTES SOLO EN MODO COMPRA */}
+        {tieneVariantes && modo === "compra" && (
           <Stack spacing={2} alignItems="center">
             <Typography fontWeight="bold">
               Selecciona una opción:
@@ -217,13 +228,6 @@ export default function DetalleModal({
                       backgroundColor: isSelected ? "#111" : "#fff",
                       color: isSelected ? "#fff" : "#333",
                       opacity: v.stock === 0 ? 0.4 : 1,
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        backgroundColor: isSelected
-                          ? "#000"
-                          : "#f5f5f5",
-                        borderColor: "#999",
-                      },
                     }}
                   >
                     {label || "Única"}
@@ -232,7 +236,6 @@ export default function DetalleModal({
               })}
             </Stack>
 
-            {/* STOCK */}
             {varianteSeleccionada && (
               <Chip
                 label={`Stock: ${varianteSeleccionada.stock}`}
@@ -247,14 +250,7 @@ export default function DetalleModal({
         )}
 
         {/* BOTÓN */}
-        <Box
-          sx={{
-            width: "100%",
-            mt: 2,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
+        <Box sx={{ width: "100%", mt: 2, display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
             startIcon={<AddShoppingCartIcon />}
@@ -265,13 +261,17 @@ export default function DetalleModal({
               width: "100%",
             }}
             disabled={
-              tieneVariantes
+              modo === "info"
+                ? true
+                : tieneVariantes
                 ? !varianteSeleccionada ||
                   varianteSeleccionada.stock === 0
                 : stockTotal === 0
             }
           >
-            {tieneVariantes
+            {modo === "info"
+              ? "Ver producto completo"
+              : tieneVariantes
               ? varianteSeleccionada
                 ? varianteSeleccionada.stock > 0
                   ? "Agregar al carrito"
@@ -285,4 +285,4 @@ export default function DetalleModal({
       </Stack>
     </Dialog>
   );
-}
+          }
