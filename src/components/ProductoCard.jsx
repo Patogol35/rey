@@ -59,7 +59,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
     (v) => v.stock > 0
   );
 
-  // 💰 PRECIO DINÁMICO (mínimo si hay variantes)
+  // 💰 PRECIO DINÁMICO
   const precioMinimo = useMemo(() => {
     if (!tieneVariantes) return producto.precio;
 
@@ -72,7 +72,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       : producto.precio;
   }, [producto, tieneVariantes]);
 
-  // 🛒 AGREGAR
+  // 🛒 AGREGAR / SELECCIONAR
   const onAdd = async () => {
     if (!isAuthenticated) {
       toast.warn("Debes iniciar sesión para agregar productos");
@@ -80,11 +80,12 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       return;
     }
 
+    // 🔥 SI TIENE VARIANTES → ABRIR MODAL EN MODO COMPRA
     if (tieneVariantes) {
       toast.info("Selecciona opciones 👇");
 
       if (onVerDetalle) {
-        onVerDetalle();
+        onVerDetalle(producto, "compra"); // 👈 CLAVE
       } else {
         navigate(`/producto/${producto.id}`, {
           state: { producto },
@@ -93,6 +94,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       return;
     }
 
+    // 🔥 SIN VARIANTES → AGREGA DIRECTO
     if (onAgregar) {
       onAgregar(producto);
       return;
@@ -181,6 +183,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
 
         {/* BOTONES */}
         <Stack spacing={1}>
+          {/* 🟢 BOTÓN PRINCIPAL */}
           <Button
             variant="contained"
             fullWidth
@@ -202,6 +205,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
               : "Agotado"}
           </Button>
 
+          {/* 🔵 BOTÓN DETALLES */}
           <Button
             variant="outlined"
             fullWidth
@@ -209,7 +213,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
             sx={botonDetallesSx}
             onClick={() =>
               onVerDetalle
-                ? onVerDetalle()
+                ? onVerDetalle(producto, "info") // 👈 CLAVE
                 : navigate(`/producto/${producto.id}`, {
                     state: { producto },
                   })
@@ -221,4 +225,4 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       </Box>
     </Card>
   );
-          }
+}
