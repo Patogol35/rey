@@ -11,16 +11,19 @@ function NavButton({ item, onClick }) {
   const alwaysColoredPaths = ["/login", "/register"];
 
   return (
-    <motion.div whileHover={{ y: -2, scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+    <motion.div whileTap={{ scale: 0.95 }}>
       <Button
         component={Link}
         to={item.path}
         startIcon={<Icon />}
         onClick={onClick}
         aria-current={isActive ? "page" : undefined}
-        variant="text"        // 🔥 controla MUI
-        color="inherit"       // 🔥 evita azul
-        disableRipple         // opcional
+        variant="text"
+        color="inherit"
+        disableRipple
+        component={motion.button} // 🔥 animación en el botón, no en el div
+        whileHover={{ y: -2, scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         sx={(theme) =>
           navButtonStyles(theme, isActive, item, alwaysColoredPaths)
         }
