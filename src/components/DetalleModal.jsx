@@ -13,7 +13,6 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useState, useEffect, useMemo } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom"; // ✅ FIX
 import { toast } from "react-toastify";
 import detalleModalStyles from "./DetalleModal.styles";
 import { botonAgregarSx } from "../components/ProductoCard.styles";
@@ -28,7 +27,6 @@ export default function DetalleModal({
 }) {
   const { agregarAlCarrito } = useCarrito();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate(); // ✅ FIX
 
   if (!producto) return null;
 
@@ -52,19 +50,21 @@ export default function DetalleModal({
   // 📦 STOCK
   const stockTotal = useMemo(() => {
     if (!producto.variantes?.length) return 1;
+
     return producto.variantes.reduce(
       (acc, v) => acc + (v.stock || 0),
       0
     );
   }, [producto]);
 
-  // 🔥 RESET SOLO CUANDO ABRE EN COMPRA
+  // RESET
   useEffect(() => {
     if (open && modo === "compra") {
       setVarianteSeleccionada(null);
     }
   }, [open, modo]);
 
+  // IMAGEN ACTIVA
   useEffect(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
       setImagenActiva(varianteSeleccionada.imagenes[0].imagen);
@@ -83,18 +83,18 @@ export default function DetalleModal({
   const precioActual =
     varianteSeleccionada?.precio ?? producto.precio;
 
-  // 🛒 AGREGAR
+  // 🛒 AGREGAR (FIX SIN CRASH)
   const handleAgregar = async () => {
-    // 🔒 LOGIN FIX (SIN ROMPER)
     if (!isAuthenticated) {
-      toast.error("Debes iniciar sesión para agregar productos al carrito");
+      toast.error("Debes iniciar sesión para agregar productos");
 
-      // 🔥 CLAVE: cerrar modal antes de navegar
+      // 🔥 cerrar modal primero
       onClose && onClose();
 
+      // 🔥 navegación segura (NO rompe React)
       setTimeout(() => {
-        navigate("/login");
-      }, 100);
+        window.location.assign("/login");
+      }, 150);
 
       return;
     }
@@ -145,7 +145,7 @@ export default function DetalleModal({
           />
         </Box>
 
-        {/* 💰 PRECIO */}
+        {/* PRECIO */}
         <Stack direction="row" alignItems="center" spacing={1}>
           <AttachMoneyIcon color="success" />
           <Typography variant="h5" fontWeight="bold" color="success.main">
@@ -246,13 +246,13 @@ export default function DetalleModal({
           </Stack>
         )}
 
-        {/* BOTÓN */}
+        {/* BOTÓN FINAL */}
         <Box sx={{ width: "100%", mt: 2, display: "flex", justifyContent: "center" }}>
           {modo === "info" ? (
             <Button
               variant="contained"
               fullWidth
-              onClick={() => setModo && setModo("compra")} // 🔥 FIX seguro
+              onClick={() => setModo && setModo("compra")}
               sx={{
                 maxWidth: 400,
                 width: "100%",
@@ -293,4 +293,4 @@ export default function DetalleModal({
       </Stack>
     </Dialog>
   );
-          }
+}
