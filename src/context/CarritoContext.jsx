@@ -15,6 +15,7 @@ export function CarritoProvider({ children }) {
   const [carrito, setCarrito] = useState({ items: [] });
   const [loading, setLoading] = useState(false);
 
+  // 🔄 CARGAR CARRITO
   const cargarCarrito = async () => {
     if (!access) {
       setCarrito({ items: [] });
@@ -24,7 +25,10 @@ export function CarritoProvider({ children }) {
     setLoading(true);
     try {
       const data = await apiGetCarrito(access);
-      setCarrito(data);
+
+      setCarrito({
+        items: data?.items || [],
+      });
     } catch (e) {
       console.error(e);
       setCarrito({ items: [] });
@@ -37,6 +41,7 @@ export function CarritoProvider({ children }) {
     cargarCarrito();
   }, [access]);
 
+  // 🔢 SET CANTIDAD
   const setCantidad = async (itemId, cantidad) => {
     if (!access) throw new Error("Debes iniciar sesión.");
     if (cantidad < 1) return;
@@ -48,7 +53,10 @@ export function CarritoProvider({ children }) {
         ...prev,
         items: prev.items.map((it) =>
           it.id === itemId
-            ? { ...it, cantidad: res.cantidad }
+            ? {
+                ...it,
+                ...res, // 🔥 sincroniza todo el item
+              }
             : it
         ),
       }));
@@ -57,7 +65,7 @@ export function CarritoProvider({ children }) {
     }
   };
 
-  // 🔥 AHORA CON VARIANTE
+  // 🛒 AGREGAR AL CARRITO (CON VARIANTES)
   const agregarAlCarrito = async (producto_id, variante_id, cantidad = 1) => {
     if (!access) throw new Error("Debes iniciar sesión.");
 
@@ -65,9 +73,29 @@ export function CarritoProvider({ children }) {
       const nuevoItem = await apiAgregar(producto_id, variante_id, cantidad, access);
 
       setCarrito((prev) => {
-        const items = prev.items.filter((it) => it.id !== nuevoItem.id);
-        return { ...prev, items: [...items, nuevoItem] };
+        const existente = prev.items.find(
+          (it) =>
+            it.producto?.id === producto_id &&
+            (it.variante?.id || null) === (variante_id || null)
+        );
+
+        if (existente) {
+          // 🔄 actualizar item existente
+          return {
+            ...prev,
+            items: prev.items.map((it) =>
+              it.id === existente.id ? nuevoItem : it
+            ),
+          };
+        }
+
+        // 🆕 nuevo item
+        return {
+          ...prev,
+          items: [...prev.items, nuevoItem],
+        };
       });
+
     } catch (e) {
       throw new Error(
         e?.response?.data?.error || "No se pudo agregar el producto"
@@ -75,16 +103,24 @@ export function CarritoProvider({ children }) {
     }
   };
 
+  // 🗑 ELIMINAR ITEM
   const eliminarItem = async (itemId) => {
-    await apiEliminar(itemId, access);
-    setCarrito((prev) => ({
-      ...prev,
-      items: prev.items.filter((it) => it.id !== itemId),
-    }));
+    try {
+      await apiEliminar(itemId, access);
+
+      setCarrito((prev) => ({
+        ...prev,
+        items: prev.items.filter((it) => it.id !== itemId),
+      }));
+    } catch (e) {
+      toast.error("Error al eliminar producto");
+    }
   };
 
+  // 🧹 LIMPIAR LOCAL
   const limpiarLocal = () => setCarrito({ items: [] });
 
+  // 📦 VALUE MEMO
   const value = useMemo(
     () => ({
       items: carrito.items || [],
@@ -105,4 +141,5 @@ export function CarritoProvider({ children }) {
   );
 }
 
+// 🔗 HOOK
 export const useCarrito = () => useContext(CarritoContext);
