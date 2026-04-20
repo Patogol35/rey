@@ -8,7 +8,6 @@ import {
   Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useNavigate } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useState, useEffect, useMemo } from "react";
@@ -26,18 +25,14 @@ export default function DetalleModal({
   modo = "compra",
   setModo, // 🔥 IMPORTANTE
 }) {
-  const navigate = useNavigate();
   const { agregarAlCarrito } = useCarrito();
-  
   const { isAuthenticated } = useAuth();
 
-  
+  if (!producto) return null;
 
   const [imagenActiva, setImagenActiva] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
-  
-  if (!producto) return null;
-  
+
   // 🖼 IMÁGENES
   const imagenes = useMemo(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
@@ -89,9 +84,7 @@ export default function DetalleModal({
   // 🛒 AGREGAR
   const handleAgregar = async () => {
     if (!isAuthenticated) {
-      
-      toast.error("Debes iniciar sesión para agregar productos");
-      navigate("/login");
+      toast.warn("Debes iniciar sesión");
       return;
     }
 
