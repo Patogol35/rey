@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -10,10 +10,9 @@ import {
   Divider,
   Dialog,
   IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
 } from "@mui/material";
 import { useCarrito } from "../context/CarritoContext";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -24,51 +23,83 @@ export default function ProductoDetalle() {
   const { state } = useLocation();
   const producto = state?.producto;
   const { agregarAlCarrito } = useCarrito();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
 
-  // 🔥 NUEVO: selección de variantes
-  const [talla, setTalla] = useState(null);
-  const [color, setColor] = useState(null);
+  // 🔥 NUEVO: variante completa (igual que modal)
+  const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
 
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
-  const variantes = producto.variantes || [];
+  const tieneVariantes = producto.variantes?.length > 0;
 
-  // 🔥 opciones únicas
-  const tallas = [...new Set(variantes.map(v => v.talla).filter(Boolean))];
-  const colores = [...new Set(variantes.map(v => v.color).filter(Boolean))];
+  // 🖼 IMÁGENES DINÁMICAS (igual que modal)
+  const imagenes = useMemo(() => {
+    if (varianteSeleccionada?.imagenes?.length > 0) {
+      return varianteSeleccionada.imagenes.map((img) => img.imagen);
+    }
 
-  // 🔥 variante seleccionada
-  const varianteSeleccionada = variantes.find(
-    v => v.talla === talla && v.color === color
-  );
+    const imgs = [
+      producto.imagen,
+      ...(producto.imagenes?.map((i) => i.imagen) || []),
+    ].filter(Boolean);
 
+    return [...new Set(imgs)];
+  }, [producto, varianteSeleccionada]);
+
+  // 📸 imagen principal
+  const [imagenActiva, setImagenActiva] = useState("");
+
+  useEffect(() => {
+    if (varianteSeleccionada?.imagenes?.length > 0) {
+      setImagenActiva(varianteSeleccionada.imagenes[0].imagen);
+    } else {
+      setImagenActiva(imagenes[0] || "");
+    }
+  }, [varianteSeleccionada, imagenes]);
+
+  const imagenSegura = imagenActiva || imagenes[0] || "";
+
+  // 💰 precio dinámico
+  const precioActual =
+    varianteSeleccionada?.precio ?? producto.precio;
+
+  // 📦 stock
+  const stockTotal = useMemo(() => {
+    if (!producto.variantes?.length) return producto.stock || 1;
+    return producto.variantes.reduce(
+      (acc, v) => acc + (v.stock || 0),
+      0
+    );
+  }, [producto]);
+
+  // 🛒 agregar
   const handleAdd = async () => {
-    if (variantes.length > 0 && !varianteSeleccionada) {
-      toast.warning("Selecciona talla y color");
+    if (!isAuthenticated) {
+      toast.error("Debes iniciar sesión");
+      return;
+    }
+
+    if (tieneVariantes && !varianteSeleccionada) {
+      toast.warning("Selecciona una variante");
       return;
     }
 
     try {
       await agregarAlCarrito(
         producto.id,
-        varianteSeleccionada?.id,
+        varianteSeleccionada?.id || null,
         1
       );
 
-      toast.success(`"${producto.nombre}" agregado al carrito ✅`);
+      toast.success(`"${producto.nombre}" agregado ✅`);
     } catch (e) {
       toast.error(e.message);
     }
   };
-
-  const imagenes = [
-    producto.imagen,
-    ...(producto.imagenes?.map(i => i.imagen) || []),
-  ].filter(Boolean);
 
   const handleZoom = (img) => {
     setZoomImage(img);
@@ -86,14 +117,14 @@ export default function ProductoDetalle() {
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: { xs: 2, md: 4 } }}>
-      {/* Volver */}
+      {/* VOLVER */}
       <Button
         startIcon={<ArrowBackIcon />}
         variant="outlined"
         sx={{ mb: 3, borderRadius: 2 }}
         onClick={() => navigate(-1)}
       >
-        Regresar a productos
+        Regresar
       </Button>
 
       <Grid container spacing={5}>
@@ -143,51 +174,58 @@ export default function ProductoDetalle() {
             </Typography>
 
             <Typography variant="h5" color="primary">
-              ${producto.precio}
+              ${precioActual}
             </Typography>
 
-            {/* 🔥 TALLAS */}
-            {tallas.length > 0 && (
+            {/* 🔥 VARIANTES (igual que modal) */}
+            {tieneVariantes && (
               <>
-                <Typography fontWeight="bold">Talla</Typography>
-                <ToggleButtonGroup
-                  value={talla}
-                  exclusive
-                  onChange={(e, val) => setTalla(val)}
-                >
-                  {tallas.map((t) => (
-                    <ToggleButton key={t} value={t}>
-                      {t}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              </>
-            )}
+                <Typography fontWeight="bold">
+                  Selecciona una opción:
+                </Typography>
 
-            {/* 🔥 COLORES */}
-            {colores.length > 0 && (
-              <>
-                <Typography fontWeight="bold">Color</Typography>
-                <ToggleButtonGroup
-                  value={color}
-                  exclusive
-                  onChange={(e, val) => setColor(val)}
-                >
-                  {colores.map((c) => (
-                    <ToggleButton key={c} value={c}>
-                      {c}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              </>
-            )}
+                <Stack direction="row" flexWrap="wrap" gap={1.5}>
+                  {producto.variantes.map((v) => {
+                    const isSelected =
+                      varianteSeleccionada?.id === v.id;
 
-            {/* 🔥 STOCK REAL */}
-            {varianteSeleccionada && (
-              <Chip
-                label={`Stock: ${varianteSeleccionada.stock}`}
-                color={varianteSeleccionada.stock > 0 ? "success" : "default"}
-              />
+                    const label = [...new Set(
+                      [v.talla, v.color, v.modelo, v.capacidad]
+                        .filter(Boolean)
+                        .map((x) => x.trim())
+                    )].join(" - ");
+
+                    return (
+                      <Button
+                        key={v.id}
+                        onClick={() => setVarianteSeleccionada(v)}
+                        disabled={v.stock === 0}
+                        sx={{
+                          borderRadius: "999px",
+                          textTransform: "none",
+                          border: "1px solid #ddd",
+                          backgroundColor: isSelected ? "#111" : "#fff",
+                          color: isSelected ? "#fff" : "#333",
+                          opacity: v.stock === 0 ? 0.4 : 1,
+                        }}
+                      >
+                        {label || "Única"}
+                      </Button>
+                    );
+                  })}
+                </Stack>
+
+                {varianteSeleccionada && (
+                  <Chip
+                    label={`Stock: ${varianteSeleccionada.stock}`}
+                    color={
+                      varianteSeleccionada.stock > 0
+                        ? "success"
+                        : "default"
+                    }
+                  />
+                )}
+              </>
             )}
 
             <Divider />
@@ -203,9 +241,10 @@ export default function ProductoDetalle() {
               startIcon={<ShoppingCartIcon />}
               onClick={handleAdd}
               disabled={
-                variantes.length > 0 &&
-                (!varianteSeleccionada ||
-                  varianteSeleccionada.stock === 0)
+                tieneVariantes
+                  ? !varianteSeleccionada ||
+                    varianteSeleccionada.stock === 0
+                  : stockTotal === 0
               }
               sx={{
                 borderRadius: 3,
@@ -213,7 +252,15 @@ export default function ProductoDetalle() {
                 background: "linear-gradient(135deg, #1976d2, #42a5f5)",
               }}
             >
-              Agregar al carrito
+              {tieneVariantes
+                ? varianteSeleccionada
+                  ? varianteSeleccionada.stock > 0
+                    ? "Agregar al carrito"
+                    : "Agotado"
+                  : "Seleccionar opción"
+                : stockTotal > 0
+                ? "Agregar al carrito"
+                : "Agotado"}
             </Button>
           </Stack>
         </Grid>
@@ -238,4 +285,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-}
+              }
