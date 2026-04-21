@@ -175,17 +175,18 @@ export const varianteBtnSx = (isSelected, stock, theme) => {
     px: 2,
     py: 0.7,
 
+    // 🔥 BORDE SIEMPRE PRESENTE
     border: "1px solid",
-    borderColor: isSelected ? "#000" : "#90caf9",
+    borderColor: isDark ? "#fff" : "#000",
 
-    // 🔥 fondo celeste por defecto
+    // 🔥 FONDO
     backgroundColor: isSelected
-      ? "#000"
+      ? "#000" // seleccionado negro
       : isDark
-      ? "rgba(144,202,249,0.15)"
-      : "#e3f2fd",
+      ? "rgba(144,202,249,0.25)" // celeste visible en dark
+      : "#e3f2fd", // celeste en light
 
-    // 🔥 texto
+    // 🔥 TEXTO
     color: isSelected ? "#fff" : theme.palette.text.primary,
 
     opacity: stock === 0 ? 0.4 : 1,
@@ -194,15 +195,16 @@ export const varianteBtnSx = (isSelected, stock, theme) => {
 
     "&:hover": {
       transform: stock > 0 ? "scale(1.05)" : "none",
+
+      // 🔥 HOVER MÁS INTENSO
       backgroundColor: isSelected
         ? "#000"
         : isDark
-        ? "rgba(144,202,249,0.3)"
+        ? "rgba(144,202,249,0.4)"
         : "#bbdefb",
     },
   };
 };
-
 
 // ================================
 // DESCRIPCIÓN
