@@ -99,7 +99,7 @@ export const imagenSx = {
   maxHeight: 420,
   objectFit: "contain",
   borderRadius: 3,
-  transition: "transform 0.1s ease",
+  //transition: "transform 0.1s ease",
 };
 
 
