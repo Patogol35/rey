@@ -67,15 +67,15 @@ export const imagenContainerSx = (theme) => ({
 
   overflow: "hidden",
 
- // transition: "all 0.3s ease",
+  transition: "all 0.3s ease",
 
-  //"&:hover": {
-   // transform: "scale(1.01)",
- // },
+  "&:hover": {
+    transform: "scale(1.01)",
+  },
 
- // "&:hover img": {
-   // transform: "scale(1.08)",
-  // },
+  "&:hover img": {
+    transform: "scale(1.08)",
+   },
 });
 
 
@@ -95,11 +95,11 @@ export const imagenSlideSx = {
 // IMAGEN
 // ================================
 export const imagenSx = {
-  maxWidth: "80%",
+  maxWidth: "70%",
   maxHeight: 420,
   objectFit: "contain",
   borderRadius: 3,
- // transition: "transform 0.5s ease",
+  transition: "transform 0.5s ease",
 };
 
 
