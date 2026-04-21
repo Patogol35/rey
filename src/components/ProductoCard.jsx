@@ -30,7 +30,7 @@ import {
   botonDetallesSx,
 } from "./ProductoCard.styles";
 
-export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
+export default function ProductoCard({ producto, onAgregar }) {
   const { isAuthenticated } = useAuth();
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
@@ -49,8 +49,14 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
 
   // 📦 STOCK
   const stockTotal = useMemo(() => {
-    if (!producto.variantes || producto.variantes.length === 0) return 1;
-    return producto.variantes.reduce((acc, v) => acc + (v.stock || 0), 0);
+    if (!producto.variantes || producto.variantes.length === 0) {
+      return producto.stock || 1;
+    }
+
+    return producto.variantes.reduce(
+      (acc, v) => acc + (v.stock || 0),
+      0
+    );
   }, [producto]);
 
   const tieneVariantes = producto.variantes?.length > 0;
@@ -72,7 +78,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       : producto.precio;
   }, [producto, tieneVariantes]);
 
-  // 🛒 AGREGAR / SELECCIONAR
+  // 🛒 AGREGAR / IR A DETALLE
   const onAdd = async () => {
     if (!isAuthenticated) {
       toast.error("Debes iniciar sesión para agregar productos");
@@ -80,17 +86,11 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       return;
     }
 
-    // 🔥 SI TIENE VARIANTES → ABRIR MODAL EN MODO COMPRA
+    // 🔥 SI TIENE VARIANTES → IR A PÁGINA DETALLE
     if (tieneVariantes) {
-      toast.info("Selecciona opciones 👇");
-
-      if (onVerDetalle) {
-        onVerDetalle(producto, "compra"); // 👈 CLAVE
-      } else {
-        navigate(`/producto/${producto.id}`, {
-          state: { producto },
-        });
-      }
+      navigate(`/producto/${producto.id}`, {
+        state: { producto },
+      });
       return;
     }
 
@@ -117,6 +117,11 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
           src={imagenActiva || "/placeholder.png"}
           alt={producto.nombre}
           sx={imagenSx}
+          onClick={() =>
+            navigate(`/producto/${producto.id}`, {
+              state: { producto },
+            })
+          }
         />
 
         {producto.nuevo && (
@@ -175,7 +180,9 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
         >
           <MonetizationOnIcon color="primary" />
           <Typography variant="h6" color="primary" fontWeight="bold">
-            {tieneVariantes ? `Desde $${precioMinimo}` : `$${producto.precio}`}
+            {tieneVariantes
+              ? `Desde $${precioMinimo}`
+              : `$${producto.precio}`}
           </Typography>
         </Stack>
 
@@ -198,7 +205,7 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
           >
             {tieneVariantes
               ? tieneStockVariantes
-                ? "Seleccionar opciones"
+                ? "Ver opciones"
                 : "Agotado"
               : stockTotal > 0
               ? "Agregar al carrito"
@@ -212,11 +219,9 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
             startIcon={<InfoIcon />}
             sx={botonDetallesSx}
             onClick={() =>
-              onVerDetalle
-                ? onVerDetalle(producto, "info") // 👈 CLAVE
-                : navigate(`/producto/${producto.id}`, {
-                    state: { producto },
-                  })
+              navigate(`/producto/${producto.id}`, {
+                state: { producto },
+              })
             }
           >
             Ver detalles
@@ -225,4 +230,4 @@ export default function ProductoCard({ producto, onVerDetalle, onAgregar }) {
       </Box>
     </Card>
   );
-        }
+            }
