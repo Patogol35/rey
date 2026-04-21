@@ -39,6 +39,13 @@ export default function Navbar() {
   const { mode, toggleMode } = useThemeMode();
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const scrolled = useScrollTrigger(50);
+
+  const menuItems = useMemo(
+    () => (isAuthenticated ? authMenu : guestMenu),
+    [isAuthenticated]
+  );
 
   const handleToggleMenu = useCallback(() => {
   setOpen((prev) => {
@@ -51,19 +58,6 @@ export default function Navbar() {
     return next;
   });
 }, []);
-  
-
-  const [open, setOpen] = useState(false);
-  const scrolled = useScrollTrigger(50);
-
-  const menuItems = useMemo(
-    () => (isAuthenticated ? authMenu : guestMenu),
-    [isAuthenticated]
-  );
-
-  const handleToggleMenu = useCallback(() => {
-    setOpen((prev) => !prev);
-  }, []);
 
   const handleCloseMenu = useCallback(() => setOpen(false), []);
 
