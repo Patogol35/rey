@@ -111,18 +111,12 @@ export default function ProductoCard({ producto, onAgregar }) {
   return (
     <Card sx={cardSx} elevation={0}>
       {/* IMAGEN */}
-      <Box sx={imagenBoxSx}>
-        <Box
-          component="img"
-          src={imagenActiva || "/placeholder.png"}
-          alt={producto.nombre}
-          sx={imagenSx}
-          onClick={() =>
-            navigate(`/producto/${producto.id}`, {
-              state: { producto },
-            })
-          }
-        />
+      <Box
+  component="img"
+  src={imagenActiva || "/placeholder.png"}
+  alt={producto.nombre}
+  sx={imagenSx}
+/>
 
         {producto.nuevo && (
           <Chip
