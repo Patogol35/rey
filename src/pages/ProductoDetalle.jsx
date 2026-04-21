@@ -271,30 +271,23 @@ useEffect(() => {
   >
     {/* BOTÓN X */}
     <IconButton
-      onClick={() => setZoomOpen(false)}
-      sx={{
-        position: "absolute",
-        top: 10,
-        right: 10,
-        zIndex: 2,
+  onClick={() => setZoomOpen(false)}
+  sx={{
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 2,
 
-        bgcolor:
-          theme.palette.mode === "dark"
-            ? "rgba(0,0,0,0.6)"
-            : "rgba(255,255,255,0.8)",
+    bgcolor: "rgba(0,0,0,0.7)", // 🔥 siempre negro
+    color: "#fff",
 
-        color: theme.palette.text.primary,
-
-        "&:hover": {
-          bgcolor:
-            theme.palette.mode === "dark"
-              ? "rgba(0,0,0,0.8)"
-              : "rgba(255,255,255,1)",
-        },
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
+    "&:hover": {
+      bgcolor: "rgba(0,0,0,0.9)",
+    },
+  }}
+>
+  <CloseIcon />
+</IconButton>
 
     {/* IMAGEN ZOOM */}
     <Box
