@@ -48,7 +48,7 @@ export const botonVolverSx = (theme) => ({
 export const imagenContainerSx = (theme) => ({
   bgcolor: theme.palette.background.paper,
   borderRadius: 5,
-  p: 3,
+  p: 2,
 
   display: "flex",
   justifyContent: "center",
@@ -95,7 +95,7 @@ export const imagenSlideSx = {
 // IMAGEN
 // ================================
 export const imagenSx = {
-  maxWidth: "50%",
+  maxWidth: "60%",
   maxHeight: 420,
   objectFit: "contain",
   borderRadius: 3,
