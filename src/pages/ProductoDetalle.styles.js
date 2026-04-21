@@ -37,14 +37,7 @@ export const botonVolverSx = (theme) => ({
 
   "&:hover": {
     backgroundColor: theme.palette.action.hover,
-  },
-
-  // 🔥 quitar focus azul
-  "&:focus": {
-    outline: "none",
-  },
-  "&:focus-visible": {
-    outline: "none",
+    transform: "scale(1.05)",
   },
 });
 
@@ -74,7 +67,15 @@ export const imagenContainerSx = (theme) => ({
 
   overflow: "hidden",
 
-  transition: "box-shadow 0.3s ease",
+  transition: "all 0.3s ease",
+
+  //"&:hover": {
+   // transform: "scale(1.01)",
+ // },
+
+ // "&:hover img": {
+   // transform: "scale(1.08)",
+  // },
 });
 
 
@@ -87,40 +88,18 @@ export const imagenSlideSx = {
   alignItems: "center",
   height: { xs: 300, md: 500 },
   cursor: "pointer",
-
-  overflow: "hidden",
-
-  // 🔥 quitar cuadro azul
-  "&:focus": {
-    outline: "none",
-  },
-  "&:focus-visible": {
-    outline: "none",
-  },
 };
 
 
 // ================================
-// IMAGEN (CORREGIDA)
+// IMAGEN
 // ================================
 export const imagenSx = {
   maxWidth: "80%",
   maxHeight: 420,
   objectFit: "contain",
   borderRadius: 3,
-
-  transition: "opacity 0.3s ease",
-  willChange: "opacity",
-
-  // 🔥 eliminar focus azul
-  outline: "none",
-
-  "&:focus": {
-    outline: "none",
-  },
-  "&:focus-visible": {
-    outline: "none",
-  },
+  transition: "transform 0.5s ease",
 };
 
 
@@ -186,6 +165,7 @@ export const variantesContainerSx = {
 
 export const varianteBtnSx = (isSelected, stock, theme) => {
   const isDark = theme.palette.mode === "dark";
+
   const borderBase = isDark ? "#fff" : "#000";
 
   return {
@@ -197,8 +177,11 @@ export const varianteBtnSx = (isSelected, stock, theme) => {
     py: 0.7,
 
     border: "1px solid",
+
+    // 🔥 SIEMPRE blanco/negro
     borderColor: borderBase,
 
+    // 🔥 seleccionado invierte colores
     backgroundColor: isSelected
       ? borderBase
       : "transparent",
@@ -222,17 +205,8 @@ export const varianteBtnSx = (isSelected, stock, theme) => {
             : "rgba(0,0,0,0.05)"
           : undefined,
     },
-
-    // 🔥 quitar focus azul
-    "&:focus": {
-      outline: "none",
-    },
-    "&:focus-visible": {
-      outline: "none",
-    },
   };
 };
-
 
 // ================================
 // DESCRIPCIÓN
@@ -276,13 +250,5 @@ export const botonAgregarSx = (stock) => ({
 
   "&:hover": {
     transform: stock > 0 ? "scale(1.05)" : "none",
-  },
-
-  // 🔥 quitar focus azul
-  "&:focus": {
-    outline: "none",
-  },
-  "&:focus-visible": {
-    outline: "none",
   },
 });
