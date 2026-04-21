@@ -1,6 +1,3 @@
-import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-
-
 // ================================
 // CONTENEDOR PRINCIPAL
 // ================================
@@ -25,10 +22,14 @@ export const botonVolverSx = (theme) => ({
   fontWeight: 500,
   px: 2,
 
+  width: "fit-content", // 🔥 evita ancho completo
+
   border: "1px solid",
   borderColor: theme.palette.divider,
 
   color: theme.palette.text.primary,
+
+  backdropFilter: "blur(6px)",
 
   transition: "all 0.25s ease",
 
@@ -40,16 +41,16 @@ export const botonVolverSx = (theme) => ({
 
 
 // ================================
-// CONTENEDOR IMÁGENES
+// CONTENEDOR IMÁGENES (CENTRADO REAL)
 // ================================
 export const imagenContainerSx = (theme) => ({
   bgcolor: theme.palette.background.paper,
   borderRadius: 4,
   p: 2,
 
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+  display: "flex",              // 🔥 clave
+  justifyContent: "center",     // 🔥 centra horizontal
+  alignItems: "center",         // 🔥 centra vertical
 
   border: "1px solid",
   borderColor: theme.palette.divider,
@@ -82,16 +83,17 @@ export const imagenSlideSx = {
 
 
 // ================================
-// IMAGEN (centrada real)
+// IMAGEN (CENTRADA)
 // ================================
 export const imagenSx = {
   maxWidth: "100%",
   maxHeight: "100%",
   objectFit: "contain",
-  borderRadius: 3,
 
-  display: "block",
-  margin: "0 auto",
+  display: "block",   // 🔥 clave
+  margin: "auto",     // 🔥 clave
+
+  borderRadius: 3,
 
   transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
 
@@ -127,13 +129,16 @@ export const precioSx = (theme) => ({
 
 
 // ================================
-// CHIP STOCK (MEJORADO 🔥)
+// STOCK (TIPO BADGE 🔥)
 // ================================
-export const stockChipSx = (stock) => ({
+export const stockSx = (stock) => ({
+  display: "inline-block",
   width: "fit-content",
-  borderRadius: 999,
+
   px: 1.5,
-  py: 0.3,
+  py: 0.4,
+
+  borderRadius: 999,
   fontSize: "0.75rem",
   fontWeight: 600,
 
@@ -143,14 +148,18 @@ export const stockChipSx = (stock) => ({
 
 
 // ================================
-// VARIANTES BOTÓN
+// VARIANTES BOTÓN (NO SE ESTIRA)
 // ================================
 export const varianteBtnSx = (isSelected, stock, theme) => ({
   borderRadius: 999,
   textTransform: "none",
   fontWeight: 500,
-  px: 2.5,
-  py: 1,
+
+  px: 2,
+  py: 0.8,
+
+  width: "auto",        // 🔥 clave
+  minWidth: "unset",    // 🔥 quita default MUI
 
   border: "1px solid",
   borderColor: isSelected
@@ -165,17 +174,12 @@ export const varianteBtnSx = (isSelected, stock, theme) => ({
     ? "#fff"
     : theme.palette.text.primary,
 
-  opacity: stock === 0 ? 0.3 : 1,
-
-  boxShadow: isSelected
-    ? "0 4px 12px rgba(0,0,0,0.2)"
-    : "none",
+  opacity: stock === 0 ? 0.4 : 1,
 
   transition: "all 0.25s ease",
 
   "&:hover": {
-    transform: stock > 0 ? "scale(1.07)" : "none",
-    borderColor: theme.palette.primary.main,
+    transform: stock > 0 ? "scale(1.05)" : "none",
   },
 });
 
@@ -191,19 +195,23 @@ export const descripcionSx = {
 
 
 // ================================
-// BOTÓN AGREGAR (FULL WIDTH + ICON 🔥)
+// BOTÓN AGREGAR (COMPACTO 🔥)
 // ================================
 export const botonAgregarSx = (stock) => ({
-  width: "100%", // 🔥 ocupa todo el ancho
   borderRadius: 999,
-  py: 1.6,
-  fontWeight: 700,
-  fontSize: "1rem",
+  py: 1.4,
+  px: 3,
+
+  width: "fit-content",     // 🔥 NO ancho completo
+  minWidth: "unset",        // 🔥 elimina ancho mínimo
+  alignSelf: "flex-start",  // 🔥 no se estira
 
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
   gap: 1,
+
+  fontWeight: 700,
+  fontSize: "0.95rem",
 
   background:
     stock > 0
@@ -217,19 +225,9 @@ export const botonAgregarSx = (stock) => ({
       ? "0 6px 18px rgba(25, 118, 210, 0.4)"
       : "none",
 
-  transition: "all 0.3s ease",
+  transition: "all 0.25s ease",
 
   "&:hover": {
     transform: stock > 0 ? "scale(1.03)" : "none",
-    boxShadow:
-      stock > 0
-        ? "0 10px 25px rgba(25, 118, 210, 0.6)"
-        : "none",
   },
 });
-
-
-// ================================
-// ICONO (usar en el botón)
-// ================================
-export const carritoIcon = ShoppingCartCheckoutIcon;
