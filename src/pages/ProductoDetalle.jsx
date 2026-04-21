@@ -251,9 +251,13 @@ export default function ProductoDetalle() {
   onClose={() => setZoomOpen(false)}
   maxWidth="md"
 >
-  <Box sx={{ position: "relative", bgcolor: "#000" }}>
-    
-    {/* BOTÓN X MEJORADO */}
+  <Box
+    sx={{
+      position: "relative",
+      bgcolor: theme.palette.background.default, // 🔥 dinámico
+    }}
+  >
+    {/* BOTÓN X */}
     <IconButton
       onClick={() => setZoomOpen(false)}
       sx={{
@@ -262,27 +266,36 @@ export default function ProductoDetalle() {
         right: 10,
         zIndex: 2,
 
-        bgcolor: "rgba(0,0,0,0.6)",
-        color: "#fff",
+        // 🔥 fondo adaptado
+        bgcolor:
+          theme.palette.mode === "dark"
+            ? "rgba(0,0,0,0.6)"
+            : "rgba(255,255,255,0.8)",
+
+        color: theme.palette.text.primary,
 
         "&:hover": {
-          bgcolor: "rgba(0,0,0,0.8)",
+          bgcolor:
+            theme.palette.mode === "dark"
+              ? "rgba(0,0,0,0.8)"
+              : "rgba(255,255,255,1)",
         },
       }}
     >
       <CloseIcon />
     </IconButton>
 
+    {/* IMAGEN */}
     <Box
-  component="img"
-  src={zoomImage}
-  onClick={() => setZoomOpen(false)}
-  sx={{
-    maxHeight: "80vh",
-    maxWidth: "100%",
-    cursor: "zoom-out",
-  }}
-/>
+      component="img"
+      src={zoomImage}
+      sx={{
+        maxHeight: "80vh",
+        maxWidth: "100%",
+        display: "block",
+        margin: "0 auto",
+      }}
+    />
   </Box>
 </Dialog>
     </Box>
