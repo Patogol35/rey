@@ -20,7 +20,6 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
 
-// ✅ IMPORT CORRECTO (incluye stockSx)
 import {
   containerSx,
   botonVolverSx,
@@ -33,6 +32,7 @@ import {
   descripcionSx,
   botonAgregarSx,
   stockSx,
+  variantesContainerSx,
 } from "./ProductoDetalle.styles";
 
 export default function ProductoDetalle() {
@@ -102,7 +102,6 @@ export default function ProductoDetalle() {
         varianteSeleccionada?.id || null,
         1
       );
-
       toast.success(`"${producto.nombre}" agregado ✅`);
     } catch (e) {
       toast.error(e.message);
@@ -135,14 +134,24 @@ export default function ProductoDetalle() {
         Regresar
       </Button>
 
-      <Grid container spacing={5}>
+      {/* 🔥 GRID CENTRADO REAL */}
+      <Grid
+        container
+        spacing={5}
+        justifyContent="center"
+        alignItems="center"
+      >
         {/* IMÁGENES */}
         <Grid item xs={12} md={6}>
           <Box sx={imagenContainerSx(theme)}>
             <Slider {...settings}>
               {imagenes.map((img, i) => (
-                <Box key={i} onClick={() => handleZoom(img)} sx={imagenSlideSx}>
-                  <Box component="img" src={img} alt="" sx={imagenSx} />
+                <Box
+                  key={i}
+                  onClick={() => handleZoom(img)}
+                  sx={imagenSlideSx}
+                >
+                  <Box component="img" src={img} sx={imagenSx} />
                 </Box>
               ))}
             </Slider>
@@ -151,8 +160,8 @@ export default function ProductoDetalle() {
 
         {/* DETALLE */}
         <Grid item xs={12} md={6}>
-          {/* 🔥 FIX PRINCIPAL */}
-          <Stack spacing={3} alignItems="flex-start">
+          {/* 🔥 STACK CENTRADO */}
+          <Stack spacing={3} alignItems="center">
             <Typography variant="h4" sx={tituloSx}>
               {producto.nombre}
             </Typography>
@@ -161,14 +170,13 @@ export default function ProductoDetalle() {
               ${precioActual}
             </Typography>
 
-            {/* VARIANTES */}
             {tieneVariantes && (
               <>
                 <Typography fontWeight="bold">
                   Selecciona una opción:
                 </Typography>
 
-                <Stack direction="row" flexWrap="wrap" gap={1.5}>
+                <Stack sx={variantesContainerSx}>
                   {producto.variantes.map((v) => {
                     const isSelected =
                       varianteSeleccionada?.id === v.id;
@@ -192,7 +200,6 @@ export default function ProductoDetalle() {
                   })}
                 </Stack>
 
-                {/* 🔥 FIX STOCK */}
                 {varianteSeleccionada && (
                   <Chip
                     label={`Stock: ${varianteSeleccionada.stock}`}
@@ -208,7 +215,6 @@ export default function ProductoDetalle() {
               {producto.descripcion}
             </Typography>
 
-            {/* BOTÓN */}
             <Button
               variant="contained"
               startIcon={<ShoppingCartIcon />}
@@ -263,4 +269,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-}
+              }
