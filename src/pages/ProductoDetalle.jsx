@@ -246,27 +246,45 @@ export default function ProductoDetalle() {
       </Grid>
 
       {/* ZOOM */}
-      <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)}>
-        <Box sx={{ position: "relative" }}>
-          <IconButton
-            onClick={() => setZoomOpen(false)}
-            sx={{
-              position: "absolute",
-              top: 10,
-              right: 10,
-              color: "white",
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+      <Dialog
+  open={zoomOpen}
+  onClose={() => setZoomOpen(false)}
+  maxWidth="md"
+>
+  <Box sx={{ position: "relative", bgcolor: "#000" }}>
+    
+    {/* BOTÓN X MEJORADO */}
+    <IconButton
+      onClick={() => setZoomOpen(false)}
+      sx={{
+        position: "absolute",
+        top: 10,
+        right: 10,
+        zIndex: 2,
 
-          <Box
-            component="img"
-            src={zoomImage}
-            sx={{ maxHeight: "80vh", maxWidth: "100%" }}
-          />
-        </Box>
-      </Dialog>
+        bgcolor: "rgba(0,0,0,0.6)",
+        color: "#fff",
+
+        "&:hover": {
+          bgcolor: "rgba(0,0,0,0.8)",
+        },
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+
+    <Box
+  component="img"
+  src={zoomImage}
+  onClick={() => setZoomOpen(false)}
+  sx={{
+    maxHeight: "80vh",
+    maxWidth: "100%",
+    cursor: "zoom-out",
+  }}
+/>
+  </Box>
+</Dialog>
     </Box>
   );
               }
