@@ -3,8 +3,12 @@
 // ================================
 export const containerSx = {
   maxWidth: 1200,
-  margin: "0 auto",
-  padding: "24px",
+  mx: "auto",
+  p: { xs: 2, md: 5 },
+
+  display: "flex",
+  flexDirection: "column",
+  gap: 3,
 };
 
 
@@ -12,52 +16,63 @@ export const containerSx = {
 // BOTÓN VOLVER
 // ================================
 export const botonVolverSx = (theme) => ({
-  marginBottom: 20,
-  borderRadius: 10,
+  mb: 2,
+  borderRadius: 999,
   textTransform: "none",
   fontWeight: 500,
+  px: 2,
 
   border: "1px solid",
-  borderColor:
-    theme.palette.mode === "dark" ? "#fff" : "#000",
+  borderColor: theme.palette.divider,
 
-  color:
-    theme.palette.mode === "dark" ? "#fff" : "#000",
+  color: theme.palette.text.primary,
+
+  backdropFilter: "blur(6px)",
+
+  transition: "all 0.25s ease",
 
   "&:hover": {
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "rgba(255,255,255,0.08)"
-        : "rgba(0,0,0,0.05)",
+    backgroundColor: theme.palette.action.hover,
+    transform: "translateX(-3px)",
   },
 });
 
 
 // ================================
-// CONTENEDOR IMAGEN
+// CONTENEDOR IMÁGENES
 // ================================
 export const imagenContainerSx = (theme) => ({
-  backgroundColor:
-    theme.palette.mode === "dark" ? "#2c2c2c" : "#f5f5f5",
+  bgcolor: theme.palette.background.paper,
+  borderRadius: 4,
+  p: 2,
 
-  borderRadius: 16,
-  padding: 16,
+  border: "1px solid",
+  borderColor: theme.palette.divider,
 
   boxShadow:
     theme.palette.mode === "dark"
-      ? "0 8px 25px rgba(0,0,0,0.5)"
-      : "0 8px 20px rgba(0,0,0,0.1)",
+      ? "0 10px 30px rgba(0,0,0,0.6)"
+      : "0 10px 30px rgba(0,0,0,0.08)",
+
+  transition: "all 0.3s ease",
+
+  "&:hover": {
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0 15px 40px rgba(0,0,0,0.8)"
+        : "0 15px 40px rgba(0,0,0,0.12)",
+  },
 });
 
 
 // ================================
-// SLIDE IMAGEN
+// IMAGEN SLIDER
 // ================================
 export const imagenSlideSx = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  height: 420,
+  height: { xs: 300, md: 500 },
   cursor: "pointer",
 };
 
@@ -69,11 +84,12 @@ export const imagenSx = {
   maxWidth: "100%",
   maxHeight: "100%",
   objectFit: "contain",
-  borderRadius: 12,
-  transition: "transform 0.3s ease",
+  borderRadius: 3,
+
+  transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
 
   "&:hover": {
-    transform: "scale(1.05)",
+    transform: "scale(1.08)",
   },
 };
 
@@ -83,7 +99,7 @@ export const imagenSx = {
 // ================================
 export const tituloSx = {
   fontWeight: 700,
-  lineHeight: 1.3,
+  fontSize: { xs: "1.4rem", md: "1.8rem" },
 };
 
 
@@ -91,50 +107,52 @@ export const tituloSx = {
 // PRECIO
 // ================================
 export const precioSx = (theme) => ({
-  fontWeight: 700,
-  fontSize: "1.6rem",
+  fontWeight: 800,
+  fontSize: "1.8rem",
+
   color:
     theme.palette.mode === "dark"
-      ? "#4dabf5"
-      : "#1976d2",
+      ? "#66b2ff"
+      : "#0d47a1",
+
+  letterSpacing: 0.5,
 });
 
 
 // ================================
-// BOTÓN VARIANTE
+// VARIANTES BOTÓN
 // ================================
 export const varianteBtnSx = (isSelected, stock, theme) => ({
-  borderRadius: "999px",
+  borderRadius: 999,
   textTransform: "none",
   fontWeight: 500,
-  fontSize: "0.85rem",
-  padding: "6px 14px",
+  px: 2.5,
+  py: 1,
 
   border: "1px solid",
-
   borderColor: isSelected
     ? theme.palette.primary.main
-    : theme.palette.mode === "dark"
-    ? "#555"
-    : "#ddd",
+    : theme.palette.divider,
 
   backgroundColor: isSelected
     ? theme.palette.primary.main
-    : theme.palette.mode === "dark"
-    ? "#1f1f1f"
-    : "#fff",
+    : "transparent",
 
-  color: isSelected ? "#fff" : theme.palette.text.primary,
+  color: isSelected
+    ? "#fff"
+    : theme.palette.text.primary,
 
-  opacity: stock === 0 ? 0.4 : 1,
+  opacity: stock === 0 ? 0.3 : 1,
+
+  boxShadow: isSelected
+    ? "0 4px 12px rgba(0,0,0,0.2)"
+    : "none",
+
+  transition: "all 0.25s ease",
 
   "&:hover": {
-    transform: stock > 0 ? "scale(1.05)" : "none",
-    backgroundColor: isSelected
-      ? theme.palette.primary.dark
-      : theme.palette.mode === "dark"
-      ? "#2a2a2a"
-      : "#f5f5f5",
+    transform: stock > 0 ? "scale(1.07)" : "none",
+    borderColor: theme.palette.primary.main,
   },
 });
 
@@ -144,18 +162,8 @@ export const varianteBtnSx = (isSelected, stock, theme) => ({
 // ================================
 export const descripcionSx = {
   color: "text.secondary",
-  lineHeight: 1.6,
+  lineHeight: 1.8,
   fontSize: "0.95rem",
-};
-
-
-// ================================
-// CHIP STOCK
-// ================================
-export const stockChipSx = {
-  alignSelf: "flex-start",
-  fontWeight: 600,
-  borderRadius: 8,
 };
 
 
@@ -163,31 +171,30 @@ export const stockChipSx = {
 // BOTÓN AGREGAR
 // ================================
 export const botonAgregarSx = (stock) => ({
-  borderRadius: 12,
-  padding: "10px 20px",
-
-  maxWidth: 280,   // 🔥 controla tamaño
-  width: "100%",
-  alignSelf: "flex-start",
-
-  fontWeight: 600,
-  fontSize: "0.95rem",
-  textTransform: "none",
+  borderRadius: 999,
+  py: 1.6,
+  fontWeight: 700,
+  fontSize: "1rem",
 
   background:
     stock > 0
       ? "linear-gradient(135deg, #1976d2, #42a5f5)"
-      : "#bdbdbd",
+      : "#9e9e9e",
 
   color: "#fff",
 
-  transition: "all 0.25s ease",
+  boxShadow:
+    stock > 0
+      ? "0 6px 18px rgba(25, 118, 210, 0.4)"
+      : "none",
+
+  transition: "all 0.3s ease",
 
   "&:hover": {
-    transform: stock > 0 ? "scale(1.04)" : "none",
-    background:
+    transform: stock > 0 ? "scale(1.05)" : "none",
+    boxShadow:
       stock > 0
-        ? "linear-gradient(135deg, #1565c0, #1e88e5)"
-        : "#bdbdbd",
+        ? "0 10px 25px rgba(25, 118, 210, 0.6)"
+        : "none",
   },
 });
