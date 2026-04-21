@@ -54,7 +54,7 @@ export const imagenContainerSx = (theme) => ({
   justifyContent: "center",
   alignItems: "center",
 
-  border: "1px solid",   // 🔥 borde visible pero elegante
+  border: "10px solid",   // 🔥 borde visible pero elegante
   borderColor: theme.palette.divider,
 
   boxShadow:
