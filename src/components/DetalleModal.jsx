@@ -23,14 +23,13 @@ export default function DetalleProducto({ setLightbox }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 🔥 RECIBIR DATOS
   const producto = location.state?.producto;
-  const [modo, setModo] = useState(location.state?.modo || "compra");
+  const modoInicial = location.state?.modo || "compra";
 
+  const [modo, setModo] = useState(modoInicial);
   const [imagenActiva, setImagenActiva] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
 
-  // 🔥 PROTEGER
   const prod = producto || {};
 
   // 🖼 IMÁGENES
@@ -56,13 +55,13 @@ export default function DetalleProducto({ setLightbox }) {
     );
   }, [prod]);
 
-  // 🔥 RESET COMO ANTES (pero sin open)
+  // 🔥 ESTE ES EL FIX CLAVE (simula open del modal)
   useEffect(() => {
-    if (modo === "compra") {
-      setVarianteSeleccionada(null);
-    }
-  }, [modo]);
+    setVarianteSeleccionada(null);
+    setModo(modoInicial);
+  }, [producto]);
 
+  // 🔥 IMAGEN ACTIVA (igual que modal)
   useEffect(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
       setImagenActiva(varianteSeleccionada.imagenes[0].imagen);
@@ -84,7 +83,7 @@ export default function DetalleProducto({ setLightbox }) {
   // 🛒 AGREGAR
   const handleAgregar = async () => {
     if (!isAuthenticated) {
-      toast.error("Debes iniciar sesión para agregar productos");
+      toast.error("Debes iniciar sesión");
       return;
     }
 
@@ -102,11 +101,10 @@ export default function DetalleProducto({ setLightbox }) {
 
       toast.success("Producto agregado ✅");
     } catch (e) {
-      toast.error(e.message || "Error al agregar");
+      toast.error(e.message || "Error");
     }
   };
 
-  // 🔥 LOADING
   if (!producto) {
     return (
       <Box p={4} textAlign="center">
@@ -118,7 +116,6 @@ export default function DetalleProducto({ setLightbox }) {
   return (
     <Box sx={{ p: 2, maxWidth: 900, mx: "auto" }}>
 
-      {/* 🔙 VOLVER */}
       <IconButton onClick={() => navigate(-1)}>
         <ArrowBackIcon />
       </IconButton>
@@ -138,7 +135,7 @@ export default function DetalleProducto({ setLightbox }) {
           />
         </Box>
 
-        {/* 💰 PRECIO */}
+        {/* PRECIO */}
         <Stack direction="row" alignItems="center" spacing={1}>
           <AttachMoneyIcon color="success" />
           <Typography variant="h5" fontWeight="bold" color="success.main">
@@ -176,13 +173,12 @@ export default function DetalleProducto({ setLightbox }) {
           <Typography variant="h5" fontWeight="bold">
             {prod.nombre}
           </Typography>
-
           <Typography sx={{ mt: 1 }}>
             {prod.descripcion}
           </Typography>
         </Box>
 
-        {/* 🔥 VARIANTES */}
+        {/* VARIANTES */}
         {tieneVariantes && modo === "compra" && (
           <Stack spacing={2} alignItems="center">
 
@@ -194,12 +190,7 @@ export default function DetalleProducto({ setLightbox }) {
               <Chip label="Sin stock" color="error" />
             )}
 
-            <Stack
-              direction="row"
-              flexWrap="wrap"
-              gap={1.5}
-              justifyContent="center"
-            >
+            <Stack direction="row" flexWrap="wrap" gap={1.5}>
               {(prod.variantes || []).map((v) => {
                 const isSelected = varianteSeleccionada?.id === v.id;
 
@@ -215,15 +206,10 @@ export default function DetalleProducto({ setLightbox }) {
                     onClick={() => setVarianteSeleccionada(v)}
                     disabled={v.stock === 0}
                     sx={{
-                      px: 2.5,
-                      py: 1,
+                      px: 2,
                       borderRadius: "999px",
-                      textTransform: "none",
-                      fontWeight: 500,
-                      border: "1px solid #ddd",
                       backgroundColor: isSelected ? "#111" : "#fff",
                       color: isSelected ? "#fff" : "#333",
-                      opacity: v.stock === 0 ? 0.4 : 1,
                     }}
                   >
                     {label || "Única"}
@@ -235,34 +221,20 @@ export default function DetalleProducto({ setLightbox }) {
             {varianteSeleccionada && (
               <Chip
                 label={`Stock: ${varianteSeleccionada.stock}`}
-                color={
-                  varianteSeleccionada.stock > 0
-                    ? "success"
-                    : "default"
-                }
+                color="success"
               />
             )}
           </Stack>
         )}
 
-        {/* 🔥 BOTÓN FINAL (IGUAL QUE MODAL) */}
-        <Box
-          sx={{
-            width: "100%",
-            mt: 2,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
+        {/* BOTÓN FINAL */}
+        <Box sx={{ width: "100%", mt: 2, display: "flex", justifyContent: "center" }}>
           {modo === "info" ? (
             <Button
               variant="contained"
               fullWidth
               onClick={() => setModo("compra")}
-              sx={{
-                maxWidth: 400,
-                backgroundColor: "#2196f3",
-              }}
+              sx={{ maxWidth: 400 }}
             >
               Seleccionar opciones
             </Button>
@@ -276,22 +248,8 @@ export default function DetalleProducto({ setLightbox }) {
                 maxWidth: 400,
                 width: "100%",
               }}
-              disabled={
-                tieneVariantes
-                  ? !varianteSeleccionada ||
-                    varianteSeleccionada.stock === 0
-                  : stockTotal === 0
-              }
             >
-              {tieneVariantes
-                ? varianteSeleccionada
-                  ? varianteSeleccionada.stock > 0
-                    ? "Agregar al carrito"
-                    : "Agotado"
-                  : "Seleccionar opciones"
-                : stockTotal > 0
-                ? "Agregar al carrito"
-                : "Agotado"}
+              Agregar al carrito
             </Button>
           )}
         </Box>
@@ -299,4 +257,4 @@ export default function DetalleProducto({ setLightbox }) {
       </Stack>
     </Box>
   );
-          }
+}
