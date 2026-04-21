@@ -54,8 +54,11 @@ export const imagenContainerSx = (theme) => ({
   justifyContent: "center",
   alignItems: "center",
 
-  border: "10px solid",   // 🔥 borde visible pero elegante
-  borderColor: theme.palette.divider,
+  border: "1px solid",   // 🔥 borde visible pero elegante
+  borderColor:
+    theme.palette.mode === "dark"
+      ? "#fff"   // 🌙 blanco en oscuro
+      : "#000",  // 🌞 negro en claro
 
   boxShadow:
     theme.palette.mode === "dark"
@@ -172,8 +175,12 @@ export const varianteBtnSx = (isSelected, stock, theme) => ({
   border: "1px solid",   // 🔥 más grueso
 
   borderColor: isSelected
-    ? theme.palette.primary.main
-    : theme.palette.grey[400],   // 🔥 más visible
+    ? theme.palette.mode === "dark"
+      ? "#fff"   // seleccionado en dark
+      : "#000"   // seleccionado en light
+    : theme.palette.mode === "dark"
+      ? "#ffffff55" // no seleccionado dark
+      : "#00000040", // no seleccionado light
 
   backgroundColor: isSelected
     ? theme.palette.primary.main
