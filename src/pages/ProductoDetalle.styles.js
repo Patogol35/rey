@@ -88,14 +88,12 @@ export const imagenSlideSx = {
 // IMAGEN
 // ================================
 export const imagenSx = {
-  maxWidth: "100%",
-  maxHeight: 500,
+  maxWidth: "90%",     // 🔥 más pequeña
+  maxHeight: 420,      // 🔥 reduce altura
   objectFit: "contain",
   borderRadius: 3,
-
   transition: "transform 0.5s ease",
 };
-
 
 // ================================
 // TÍTULO
