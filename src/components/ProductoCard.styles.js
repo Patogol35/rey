@@ -3,7 +3,7 @@
 // ================================
 export const cardSx = (theme) => ({
   width: 320,
-  height: 480,
+  height: auto,
   borderRadius: 3,
 
   // Fondo principal 
