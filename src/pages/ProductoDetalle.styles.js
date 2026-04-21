@@ -26,7 +26,6 @@ export const botonVolverSx = (theme) => ({
 
   border: "1px solid",
   borderColor: theme.palette.divider,
-
   color: theme.palette.text.primary,
 
   backdropFilter: "blur(6px)",
@@ -38,16 +37,6 @@ export const botonVolverSx = (theme) => ({
     transform: "translateX(-4px)",
   },
 });
-
-
-// ================================
-// CONTENEDOR PRINCIPAL GRID
-// ================================
-export const gridSx = {
-  display: "grid",
-  gridTemplateColumns: { xs: "1fr", md: "1.1fr 0.9fr" },
-  gap: 5,
-};
 
 
 // ================================
@@ -81,24 +70,27 @@ export const imagenContainerSx = (theme) => ({
 
 
 // ================================
+// 🔥 IMAGEN SLIDE (FALTABA ESTO)
+// ================================
+export const imagenSlideSx = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: { xs: 300, md: 500 },
+  cursor: "pointer",
+};
+
+
+// ================================
 // IMAGEN
 // ================================
 export const imagenSx = {
   maxWidth: "100%",
   maxHeight: 500,
   objectFit: "contain",
+  borderRadius: 3,
 
   transition: "transform 0.5s ease",
-};
-
-
-// ================================
-// INFO CONTENEDOR
-// ================================
-export const infoSx = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 2.5,
 };
 
 
@@ -118,7 +110,6 @@ export const tituloSx = {
 export const precioSx = (theme) => ({
   fontWeight: 800,
   fontSize: "2rem",
-
   color:
     theme.palette.mode === "dark"
       ? "#66b2ff"
@@ -127,10 +118,10 @@ export const precioSx = (theme) => ({
 
 
 // ================================
-// STOCK (CHIP PRO 🔥)
+// STOCK
 // ================================
 export const stockSx = (stock) => ({
-  alignSelf: "flex-start",       // 🔥 evita stretch
+  alignSelf: "flex-start",
   display: "inline-flex",
 
   px: 1.8,
@@ -162,7 +153,6 @@ export const variantesContainerSx = {
   flexWrap: "wrap",
   gap: 1,
 };
-
 
 export const varianteBtnSx = (isSelected, stock, theme) => ({
   borderRadius: "999px",
@@ -207,7 +197,7 @@ export const descripcionSx = {
 
 
 // ================================
-// BOTÓN AGREGAR AL CARRITO 🔥
+// BOTÓN AGREGAR
 // ================================
 export const botonAgregarSx = (stock) => ({
   alignSelf: "flex-start",
