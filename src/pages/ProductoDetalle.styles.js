@@ -22,14 +22,13 @@ export const botonVolverSx = (theme) => ({
   fontWeight: 500,
   px: 2,
 
-  width: "fit-content", // 🔥 evita ancho completo
+  width: "fit-content",
+  alignSelf: "flex-start", // 🔥 evita que se estire
 
   border: "1px solid",
   borderColor: theme.palette.divider,
 
   color: theme.palette.text.primary,
-
-  backdropFilter: "blur(6px)",
 
   transition: "all 0.25s ease",
 
@@ -48,9 +47,11 @@ export const imagenContainerSx = (theme) => ({
   borderRadius: 4,
   p: 2,
 
-  display: "flex",              // 🔥 clave
-  justifyContent: "center",     // 🔥 centra horizontal
-  alignItems: "center",         // 🔥 centra vertical
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+
+  width: "100%", // 🔥 importante
 
   border: "1px solid",
   borderColor: theme.palette.divider,
@@ -59,15 +60,6 @@ export const imagenContainerSx = (theme) => ({
     theme.palette.mode === "dark"
       ? "0 10px 30px rgba(0,0,0,0.6)"
       : "0 10px 30px rgba(0,0,0,0.08)",
-
-  transition: "all 0.3s ease",
-
-  "&:hover": {
-    boxShadow:
-      theme.palette.mode === "dark"
-        ? "0 15px 40px rgba(0,0,0,0.8)"
-        : "0 15px 40px rgba(0,0,0,0.12)",
-  },
 });
 
 
@@ -83,22 +75,22 @@ export const imagenSlideSx = {
 
 
 // ================================
-// IMAGEN (CENTRADA)
+// IMAGEN (CENTRADA REAL 🔥)
 // ================================
 export const imagenSx = {
   maxWidth: "100%",
   maxHeight: "100%",
   objectFit: "contain",
 
-  display: "block",   // 🔥 clave
-  margin: "auto",     // 🔥 clave
+  display: "block",
+  margin: "0 auto", // 🔥 clave real
 
   borderRadius: 3,
 
-  transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+  transition: "transform 0.4s ease",
 
   "&:hover": {
-    transform: "scale(1.08)",
+    transform: "scale(1.05)",
   },
 };
 
@@ -123,17 +115,18 @@ export const precioSx = (theme) => ({
     theme.palette.mode === "dark"
       ? "#66b2ff"
       : "#0d47a1",
-
-  letterSpacing: 0.5,
 });
 
 
 // ================================
-// STOCK (TIPO BADGE 🔥)
+// STOCK (FIX REAL 🔥)
 // ================================
 export const stockSx = (stock) => ({
-  display: "inline-block",
+  display: "inline-flex",   // 🔥 mejor que inline-block
+  alignItems: "center",
+
   width: "fit-content",
+  alignSelf: "flex-start",  // 🔥 evita que crezca
 
   px: 1.5,
   py: 0.4,
@@ -148,7 +141,7 @@ export const stockSx = (stock) => ({
 
 
 // ================================
-// VARIANTES BOTÓN (NO SE ESTIRA)
+// VARIANTES BOTÓN
 // ================================
 export const varianteBtnSx = (isSelected, stock, theme) => ({
   borderRadius: 999,
@@ -158,8 +151,8 @@ export const varianteBtnSx = (isSelected, stock, theme) => ({
   px: 2,
   py: 0.8,
 
-  width: "auto",        // 🔥 clave
-  minWidth: "unset",    // 🔥 quita default MUI
+  width: "auto",
+  minWidth: "unset",
 
   border: "1px solid",
   borderColor: isSelected
@@ -175,12 +168,6 @@ export const varianteBtnSx = (isSelected, stock, theme) => ({
     : theme.palette.text.primary,
 
   opacity: stock === 0 ? 0.4 : 1,
-
-  transition: "all 0.25s ease",
-
-  "&:hover": {
-    transform: stock > 0 ? "scale(1.05)" : "none",
-  },
 });
 
 
@@ -190,28 +177,26 @@ export const varianteBtnSx = (isSelected, stock, theme) => ({
 export const descripcionSx = {
   color: "text.secondary",
   lineHeight: 1.8,
-  fontSize: "0.95rem",
 };
 
 
 // ================================
-// BOTÓN AGREGAR (COMPACTO 🔥)
+// BOTÓN AGREGAR (FIX REAL 🔥)
 // ================================
 export const botonAgregarSx = (stock) => ({
   borderRadius: 999,
   py: 1.4,
   px: 3,
 
-  width: "fit-content",     // 🔥 NO ancho completo
-  minWidth: "unset",        // 🔥 elimina ancho mínimo
-  alignSelf: "flex-start",  // 🔥 no se estira
+  width: "fit-content",
+  minWidth: "unset",
+  alignSelf: "flex-start", // 🔥 clave
 
-  display: "flex",
+  display: "inline-flex",
   alignItems: "center",
   gap: 1,
 
   fontWeight: 700,
-  fontSize: "0.95rem",
 
   background:
     stock > 0
@@ -224,10 +209,4 @@ export const botonAgregarSx = (stock) => ({
     stock > 0
       ? "0 6px 18px rgba(25, 118, 210, 0.4)"
       : "none",
-
-  transition: "all 0.25s ease",
-
-  "&:hover": {
-    transform: stock > 0 ? "scale(1.03)" : "none",
-  },
 });
