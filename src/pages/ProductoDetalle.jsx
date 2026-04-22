@@ -55,39 +55,47 @@ export default function ProductoDetalle() {
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
 
-  const BASE_URL = import.meta.env.VITE_API_URL || "";
-
+  // 🔥 cerrar zoom si se abre menú
   useEffect(() => {
     const handleMenuOpen = () => setZoomOpen(false);
     window.addEventListener("menuOpen", handleMenuOpen);
     return () => window.removeEventListener("menuOpen", handleMenuOpen);
   }, []);
 
+  // 🔥 DEBUG (AQUÍ VA)
+  useEffect(() => {
+    console.log("PRODUCTO:", producto);
+    console.log("VARIANTE SELECCIONADA:", varianteSeleccionada);
+  }, [varianteSeleccionada]);
+
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
   const tieneVariantes = producto.variantes?.length > 0;
 
-  // 🔥 NORMALIZAR URL
+  // 🔥 función flexible para leer imágenes
   const getImageUrl = (img) => {
     if (!img) return "";
+    if (typeof img === "string") return img;
 
-    if (typeof img === "string") {
-      return img.startsWith("http") ? img : `${BASE_URL}${img}`;
-    }
-
-    const url = img.imagen || img.image || img.url || "";
-    return url.startsWith("http") ? url : `${BASE_URL}${url}`;
+    return (
+      img.imagen ||
+      img.image ||
+      img.url ||
+      img.file ||
+      img.src ||
+      ""
+    );
   };
 
-  // 🔥 IMÁGENES DINÁMICAS
   const imagenes = useMemo(() => {
     let imgs = [];
 
     if (varianteSeleccionada?.imagenes?.length > 0) {
-      console.log("VARIANTE IMGS:", varianteSeleccionada.imagenes);
-
       imgs = varianteSeleccionada.imagenes.map(getImageUrl);
-    } else {
+    }
+
+    // fallback
+    if (imgs.length === 0) {
       imgs = [
         getImageUrl(producto.imagen),
         ...(producto.imagenes?.map(getImageUrl) || []),
@@ -96,14 +104,6 @@ export default function ProductoDetalle() {
 
     return [...new Set(imgs.filter(Boolean))];
   }, [producto, varianteSeleccionada]);
-
-  const [imagenActiva, setImagenActiva] = useState("");
-
-  useEffect(() => {
-    if (imagenes.length > 0) {
-      setImagenActiva(imagenes[0]);
-    }
-  }, [imagenes]);
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -283,12 +283,7 @@ export default function ProductoDetalle() {
 
       {/* ZOOM */}
       <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)} maxWidth="md">
-        <Box
-          sx={{
-            position: "relative",
-            bgcolor: theme.palette.background.default,
-          }}
-        >
+        <Box sx={{ position: "relative", bgcolor: theme.palette.background.default }}>
           <IconButton
             onClick={() => setZoomOpen(false)}
             sx={{
@@ -298,9 +293,6 @@ export default function ProductoDetalle() {
               zIndex: 2,
               bgcolor: "rgba(0,0,0,0.7)",
               color: "#fff",
-              "&:hover": {
-                bgcolor: "rgba(0,0,0,0.9)",
-              },
             }}
           >
             <CloseIcon />
@@ -309,13 +301,11 @@ export default function ProductoDetalle() {
           <Box
             component="img"
             src={zoomImage}
-            onClick={() => setZoomOpen(false)}
             sx={{
               maxHeight: "80vh",
               maxWidth: "100%",
               display: "block",
               margin: "0 auto",
-              cursor: "zoom-out",
             }}
           />
         </Box>
