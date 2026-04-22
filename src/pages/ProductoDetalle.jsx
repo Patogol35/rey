@@ -31,15 +31,12 @@ import {
   botonAgregarSx,
   stockSx,
   variantesContainerSx,
-
-  // 🔥 NUEVOS estilos
   imagenWrapperSx,
   miniaturasContainerSx,
   miniaturaSx,
   zoomContainerSx,
   zoomCloseBtnSx,
   zoomImagenSx,
-
 } from "./ProductoDetalle.styles";
 
 export default function ProductoDetalle() {
@@ -56,6 +53,7 @@ export default function ProductoDetalle() {
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
   const [imagenActiva, setImagenActiva] = useState("");
+  const [loadingImg, setLoadingImg] = useState(true); // 🔥 NUEVO
 
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
@@ -83,10 +81,19 @@ export default function ProductoDetalle() {
       .filter(Boolean);
   }, [producto, varianteSeleccionada]);
 
+  // 🔥 SET IMAGEN ACTIVA
   useEffect(() => {
     if (imagenes.length > 0) {
       setImagenActiva(imagenes[0]);
     }
+  }, [imagenes]);
+
+  // 🔥 PRELOAD (ULTRA IMPORTANTE)
+  useEffect(() => {
+    imagenes.forEach((img) => {
+      const i = new Image();
+      i.src = img;
+    });
   }, [imagenes]);
 
   const precioActual =
@@ -123,7 +130,6 @@ export default function ProductoDetalle() {
 
   return (
     <Box sx={containerSx}>
-
       {/* VOLVER */}
       <Button
         startIcon={<ArrowBackIcon />}
@@ -148,7 +154,10 @@ export default function ProductoDetalle() {
                     key={i}
                     component="img"
                     src={img}
-                    onClick={() => setImagenActiva(img)}
+                    onClick={() => {
+                      setLoadingImg(true); // 🔥 activa loader
+                      setImagenActiva(img);
+                    }}
                     sx={miniaturaSx(imagenActiva === img)}
                   />
                 ))}
@@ -166,7 +175,17 @@ export default function ProductoDetalle() {
                 setZoomOpen(true);
               }}
             >
-              <Box component="img" src={imagenActiva} sx={imagenSx} />
+              {/* 🔥 IMAGEN CON FADE */}
+              <Box
+                component="img"
+                src={imagenActiva}
+                onLoad={() => setLoadingImg(false)}
+                sx={{
+                  ...imagenSx,
+                  opacity: loadingImg ? 0 : 1,
+                  transition: "opacity 0.3s ease",
+                }}
+              />
             </Box>
 
           </Box>
@@ -273,14 +292,10 @@ export default function ProductoDetalle() {
             <CloseIcon />
           </IconButton>
 
-          <Box
-            component="img"
-            src={zoomImage}
-            sx={zoomImagenSx}
-          />
+          <Box component="img" src={zoomImage} sx={zoomImagenSx} />
         </Box>
       </Dialog>
 
     </Box>
   );
-                    }
+      }
