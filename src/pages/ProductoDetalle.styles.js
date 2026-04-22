@@ -36,7 +36,7 @@ export const botonVolverSx = (theme) => ({
 });
 
 // ================================
-// WRAPPER IMÁGENES (NUEVO)
+// WRAPPER IMÁGENES
 // ================================
 export const imagenWrapperSx = {
   display: "flex",
@@ -47,28 +47,50 @@ export const imagenWrapperSx = {
 };
 
 // ================================
-// MINIATURAS (NUEVO)
+// 🔥 MINIATURAS (MEJORADAS)
 // ================================
 export const miniaturasContainerSx = {
   display: "flex",
   flexDirection: { xs: "row", md: "column" },
-  gap: 1,
+  gap: 1.5,
   overflowX: "auto",
+  padding: "4px",
+
+  // Scroll más limpio
+  "&::-webkit-scrollbar": {
+    height: 6,
+    width: 6,
+  },
+  "&::-webkit-scrollbar-thumb": {
+    background: "#ccc",
+    borderRadius: 10,
+  },
 };
 
 export const miniaturaSx = (activa) => ({
-  width: 65,
-  height: 65,
+  width: 70,
+  height: 70,
   objectFit: "cover",
-  borderRadius: 2,
+  borderRadius: 10,
   cursor: "pointer",
-  border: activa ? "2px solid #1976d2" : "1px solid #ccc",
-  opacity: activa ? 1 : 0.6,
+  flexShrink: 0,
+
+  border: activa ? "2px solid #1976d2" : "1px solid #ddd",
+
+  opacity: activa ? 1 : 0.7,
+
+  boxShadow: activa
+    ? "0 6px 18px rgba(25,118,210,0.5)"
+    : "0 2px 8px rgba(0,0,0,0.15)",
+
+  transform: activa ? "scale(1.08)" : "scale(1)",
+
   transition: "all 0.25s ease",
 
   "&:hover": {
     opacity: 1,
-    transform: "scale(1.05)",
+    transform: "scale(1.1)",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
   },
 });
 
@@ -119,7 +141,7 @@ export const imagenSx = {
 };
 
 // ================================
-// ZOOM (NUEVO)
+// ZOOM
 // ================================
 export const zoomContainerSx = (theme) => ({
   position: "relative",
