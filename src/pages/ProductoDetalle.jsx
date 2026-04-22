@@ -47,7 +47,6 @@ export default function ProductoDetalle() {
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
-  const [imagenActiva, setImagenActiva] = useState("");
 
   useEffect(() => {
     const handleMenuOpen = () => setZoomOpen(false);
@@ -59,32 +58,42 @@ export default function ProductoDetalle() {
 
   const tieneVariantes = producto.variantes?.length > 0;
 
-  // 🔥 IMÁGENES DINÁMICAS (FIX PRINCIPAL)
-  const imagenes = useMemo(() => {
-    if (varianteSeleccionada) {
-      const imgs = [
-        ...(varianteSeleccionada.imagenes?.map((i) => i.imagen) || []),
-        varianteSeleccionada.imagen, // fallback por si hay imagen principal
-      ].filter(Boolean);
+  // 🔥 FUNCIÓN ROBUSTA PARA EXTRAER IMÁGENES
+  const extraerImagenes = (obj) => {
+    if (!obj) return [];
 
-      if (imgs.length > 0) {
-        return [...new Set(imgs)];
-      }
+    let imgs = [];
+
+    // caso array de imágenes [{imagen: url}]
+    if (Array.isArray(obj.imagenes)) {
+      imgs.push(...obj.imagenes.map((i) => i.imagen));
     }
 
-    // fallback producto
-    const imgs = [
-      producto.imagen,
-      ...(producto.imagenes?.map((i) => i.imagen) || []),
-    ].filter(Boolean);
+    // caso imagen única
+    if (obj.imagen) {
+      imgs.push(obj.imagen);
+    }
 
-    return [...new Set(imgs)];
+    // caso raro: string directa
+    if (typeof obj.imagenes === "string") {
+      imgs.push(obj.imagenes);
+    }
+
+    return imgs.filter(Boolean);
+  };
+
+  // 🔥 IMÁGENES FINALES
+  const imagenes = useMemo(() => {
+    const imgsVariante = extraerImagenes(varianteSeleccionada);
+
+    if (imgsVariante.length > 0) {
+      return [...new Set(imgsVariante)];
+    }
+
+    const imgsProducto = extraerImagenes(producto);
+
+    return [...new Set(imgsProducto)];
   }, [producto, varianteSeleccionada]);
-
-  // 🔥 imagen activa
-  useEffect(() => {
-    setImagenActiva(imagenes[0] || "");
-  }, [imagenes]);
 
   const precioActual =
     varianteSeleccionada?.precio ?? producto.precio;
@@ -137,7 +146,6 @@ export default function ProductoDetalle() {
 
   return (
     <Box sx={containerSx}>
-      {/* VOLVER */}
       <Button
         startIcon={<ArrowBackIcon />}
         variant="outlined"
@@ -151,7 +159,6 @@ export default function ProductoDetalle() {
         {/* IMÁGENES */}
         <Grid item xs={12} md={6}>
           <Box sx={imagenContainerSx(theme)}>
-            {/* 🔥 key para reiniciar slider al cambiar variante */}
             <Slider key={varianteSeleccionada?.id || "producto"} {...settings}>
               {imagenes.map((img, i) => (
                 <Box key={i} onClick={() => handleZoom(img)} sx={imagenSlideSx}>
@@ -288,4 +295,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-}
+  }
