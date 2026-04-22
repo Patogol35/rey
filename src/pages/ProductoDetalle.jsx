@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -38,16 +38,33 @@ import {
 export default function ProductoDetalle() {
   const { state } = useLocation();
   const location = useLocation();
-  const producto = state?.producto;
+  const { id } = useParams(); // 🔥 CLAVE
+  const navigate = useNavigate();
+  const theme = useTheme();
 
   const { agregarAlCarrito } = useCarrito();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const theme = useTheme();
+
+  const [producto, setProducto] = useState(state?.producto || null);
+  const [loading, setLoading] = useState(!state?.producto);
 
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
+
+  // 🔥 FETCH REAL (SOLUCIÓN)
+  useEffect(() => {
+    fetch(`/api/productos/${id}/`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProducto(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Error cargando producto");
+        setLoading(false);
+      });
+  }, [id]);
 
   useEffect(() => {
     const handleMenuOpen = () => setZoomOpen(false);
@@ -57,39 +74,24 @@ export default function ProductoDetalle() {
     };
   }, []);
 
+  if (loading) return <Typography>Cargando...</Typography>;
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
   const tieneVariantes = producto.variantes?.length > 0;
 
-  // 🔥 FUNCIÓN CLAVE (arreglada)
+  // 🔥 IMÁGENES (YA FUNCIONA CON API REAL)
   const imagenes = useMemo(() => {
     if (varianteSeleccionada?.imagenes?.length > 0) {
-      const imgs = varianteSeleccionada.imagenes
-        .map((img) =>
-          typeof img === "string"
-            ? img
-            : img?.imagen || img?.url || null
-        )
+      return varianteSeleccionada.imagenes
+        .map((img) => img?.imagen)
         .filter(Boolean);
-
-      return imgs.length ? imgs : [producto.imagen].filter(Boolean);
     }
 
-    const imgs = [
+    return [
       producto.imagen,
       ...(producto.imagenes?.map((i) => i.imagen) || []),
     ].filter(Boolean);
-
-    return [...new Set(imgs)];
   }, [producto, varianteSeleccionada]);
-
-  const [imagenActiva, setImagenActiva] = useState("");
-
-  useEffect(() => {
-    if (imagenes.length > 0) {
-      setImagenActiva(imagenes[0]);
-    }
-  }, [imagenes]);
 
   const precioActual =
     varianteSeleccionada?.precio ?? producto.precio;
@@ -142,7 +144,6 @@ export default function ProductoDetalle() {
 
   return (
     <Box sx={containerSx}>
-      {/* VOLVER */}
       <Button
         startIcon={<ArrowBackIcon />}
         variant="outlined"
@@ -258,12 +259,7 @@ export default function ProductoDetalle() {
 
       {/* ZOOM */}
       <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)} maxWidth="md">
-        <Box
-          sx={{
-            position: "relative",
-            bgcolor: theme.palette.background.default,
-          }}
-        >
+        <Box sx={{ position: "relative", bgcolor: theme.palette.background.default }}>
           <IconButton
             onClick={() => setZoomOpen(false)}
             sx={{
@@ -273,9 +269,6 @@ export default function ProductoDetalle() {
               zIndex: 2,
               bgcolor: "rgba(0,0,0,0.7)",
               color: "#fff",
-              "&:hover": {
-                bgcolor: "rgba(0,0,0,0.9)",
-              },
             }}
           >
             <CloseIcon />
