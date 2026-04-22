@@ -8,7 +8,7 @@ import {
   Stack,
   Chip,
   Divider,
- Dialog,
+  Dialog,
   IconButton,
   useTheme,
 } from "@mui/material";
@@ -22,6 +22,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   containerSx,
   botonVolverSx,
+  imagenContainerSx,
+  imagenSx,
   tituloSx,
   precioSx,
   varianteBtnSx,
@@ -105,7 +107,7 @@ export default function ProductoDetalle() {
         1
       );
 
-      // 🔥 TU FORMATO ORIGINAL
+      // 🔥 TOAST COMO LO TENÍAS
       toast.success(`${producto.nombre} agregado al carrito 🛒`);
     } catch (e) {
       toast.error(e.message);
@@ -125,8 +127,8 @@ export default function ProductoDetalle() {
       </Button>
 
       <Grid container spacing={5} justifyContent="center">
-        
-        {/* 🔥 IMÁGENES PRO */}
+
+        {/* 🔥 IMÁGENES */}
         <Grid item xs={12} md={6}>
           <Box
             sx={{
@@ -134,8 +136,10 @@ export default function ProductoDetalle() {
               gap: 2,
               flexDirection: { xs: "column", md: "row" },
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
+
             {/* MINIATURAS */}
             {imagenes.length > 1 && (
               <Box
@@ -153,8 +157,8 @@ export default function ProductoDetalle() {
                     src={img}
                     onClick={() => setImagenActiva(img)}
                     sx={{
-                      width: 70,
-                      height: 70,
+                      width: 65,
+                      height: 65,
                       objectFit: "cover",
                       borderRadius: 2,
                       cursor: "pointer",
@@ -170,30 +174,31 @@ export default function ProductoDetalle() {
               </Box>
             )}
 
-            {/* IMAGEN PRINCIPAL */}
+            {/* 🔥 IMAGEN PRINCIPAL (TU ESTILO) */}
             <Box
-              component="img"
-              src={imagenActiva}
+              sx={{
+                ...imagenContainerSx(theme),
+                cursor: "zoom-in",
+              }}
               onClick={() => {
                 setZoomImage(imagenActiva);
                 setZoomOpen(true);
               }}
-              sx={{
-                width: "100%",
-                maxHeight: 450,
-                objectFit: "contain",
-                borderRadius: 2,
-                cursor: "zoom-in",
-                flex: 1,
-              }}
-            />
+            >
+              <Box
+                component="img"
+                src={imagenActiva}
+                sx={imagenSx}
+              />
+            </Box>
+
           </Box>
         </Grid>
 
         {/* DETALLE */}
         <Grid item xs={12} md={6}>
           <Stack spacing={3} alignItems="center">
-            
+
             <Typography variant="h4" sx={tituloSx}>
               {producto.nombre}
             </Typography>
@@ -276,11 +281,12 @@ export default function ProductoDetalle() {
                 ? "Agregar al carrito"
                 : "Agotado"}
             </Button>
+
           </Stack>
         </Grid>
       </Grid>
 
-      {/* ZOOM */}
+      {/* 🔍 ZOOM */}
       <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)}>
         <Box sx={{ position: "relative" }}>
           <IconButton
@@ -310,4 +316,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-        }
+            }
