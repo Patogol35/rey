@@ -79,19 +79,30 @@ export default function ProductoDetalle() {
       .filter(Boolean);
   }, [producto, varianteSeleccionada]);
 
-  // 🔥 CLAVE: imagen inicial desde el primer render
+  // 🔥 CONTROL REAL DE MINIATURAS
+  const mostrarMiniaturas = useMemo(() => {
+    if (varianteSeleccionada) {
+      return varianteSeleccionada.imagenes?.length > 1;
+    }
+
+    const totalProductoImgs =
+      [producto.imagen, ...(producto.imagenes || [])]
+        .map(getImagen)
+        .filter(Boolean).length;
+
+    return totalProductoImgs > 1;
+  }, [producto, varianteSeleccionada]);
+
   const [imagenMostrada, setImagenMostrada] = useState(
     imagenes[0] || ""
   );
 
-  // 🔥 SOLO cambia cuando realmente cambia la lista
   useEffect(() => {
     if (imagenes.length > 0) {
       setImagenMostrada(imagenes[0]);
     }
   }, [imagenes]);
 
-  // 🔥 CAMBIO SIN VACÍO
   const cambiarImagen = (imgUrl) => {
     const img = new Image();
     img.src = imgUrl;
@@ -150,7 +161,7 @@ export default function ProductoDetalle() {
         <Grid item xs={12} md={6}>
           <Box sx={imagenWrapperSx}>
 
-            {imagenes.length > 1 && (
+            {mostrarMiniaturas && (
               <Box sx={miniaturasContainerSx}>
                 {imagenes.map((img, i) => (
                   <Box
@@ -287,4 +298,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-}
+              }
