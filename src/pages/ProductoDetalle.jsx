@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -49,8 +48,8 @@ export default function ProductoDetalle() {
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
+  const [imagenActiva, setImagenActiva] = useState("");
 
-  // cerrar zoom si se abre menú
   useEffect(() => {
     const handleMenuOpen = () => setZoomOpen(false);
     window.addEventListener("menuOpen", handleMenuOpen);
@@ -61,25 +60,37 @@ export default function ProductoDetalle() {
 
   const tieneVariantes = producto.variantes?.length > 0;
 
-  // 🔥 IMÁGENES DINÁMICAS
+  // 🔥 NORMALIZAR IMÁGENES (CLAVE)
+  const getImagen = (img) => {
+    if (!img) return null;
+
+    // caso string
+    if (typeof img === "string") return img;
+
+    // caso objeto { imagen: "" }
+    if (typeof img === "object" && img.imagen) return img.imagen;
+
+    return null;
+  };
+
   const imagenes = useMemo(() => {
+    // 🔥 PRIORIDAD: VARIANTE
     if (varianteSeleccionada?.imagenes?.length > 0) {
-      return varianteSeleccionada.imagenes.map((img) => img.imagen);
+      return varianteSeleccionada.imagenes
+        .map(getImagen)
+        .filter(Boolean);
     }
 
+    // 🔥 PRODUCTO BASE
     const imgs = [
       producto.imagen,
-      ...(producto.imagenes?.map((i) => i.imagen) || []),
-    ].filter(Boolean);
+      ...(producto.imagenes || []),
+    ]
+      .map(getImagen)
+      .filter(Boolean);
 
     return [...new Set(imgs)];
   }, [producto, varianteSeleccionada]);
-
-  // 🔥 DEBUG (puedes quitar luego)
-  console.log("VARIANTE:", varianteSeleccionada);
-  console.log("IMAGENES:", imagenes);
-
-  const [imagenActiva, setImagenActiva] = useState("");
 
   useEffect(() => {
     if (imagenes.length > 0) {
@@ -100,7 +111,7 @@ export default function ProductoDetalle() {
 
   const handleAdd = async () => {
     if (!isAuthenticated) {
-      toast.info("Inicia sesión para agregar productos al carrito");
+      toast.info("Inicia sesión");
       navigate("/login", { state: { from: location } });
       return;
     }
@@ -116,7 +127,7 @@ export default function ProductoDetalle() {
         varianteSeleccionada?.id || null,
         1
       );
-      toast.success(`"${producto.nombre}" agregado ✅`);
+      toast.success("Agregado al carrito ✅");
     } catch (e) {
       toast.error(e.message);
     }
@@ -132,8 +143,6 @@ export default function ProductoDetalle() {
     infinite: true,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1,
-    adaptiveHeight: true,
   };
 
   return (
@@ -148,14 +157,11 @@ export default function ProductoDetalle() {
         Regresar
       </Button>
 
-      <Grid container spacing={5} justifyContent="center" alignItems="center">
-
-        {/* 🖼 IMÁGENES */}
+      <Grid container spacing={5} justifyContent="center">
+        {/* IMÁGENES */}
         <Grid item xs={12} md={6}>
           <Box sx={imagenContainerSx(theme)}>
-
-            {/* 🔥 FIX DEFINITIVO */}
-            <Slider {...settings} key={imagenes.join("-")}>
+            <Slider {...settings}>
               {imagenes.map((img, i) => (
                 <Box
                   key={i}
@@ -166,14 +172,12 @@ export default function ProductoDetalle() {
                 </Box>
               ))}
             </Slider>
-
           </Box>
         </Grid>
 
-        {/* 📄 DETALLE */}
+        {/* DETALLE */}
         <Grid item xs={12} md={6}>
           <Stack spacing={3} alignItems="center">
-
             <Typography variant="h4" sx={tituloSx}>
               {producto.nombre}
             </Typography>
@@ -185,7 +189,7 @@ export default function ProductoDetalle() {
             {tieneVariantes && (
               <>
                 <Typography fontWeight="bold">
-                  Selecciona una opción:
+                  Selecciona:
                 </Typography>
 
                 <Stack direction="row" sx={variantesContainerSx}>
@@ -193,11 +197,14 @@ export default function ProductoDetalle() {
                     const isSelected =
                       varianteSeleccionada?.id === v.id;
 
-                    const label = [...new Set(
-                      [v.talla, v.color, v.modelo, v.capacidad]
-                        .filter(Boolean)
-                        .map((x) => x.trim())
-                    )].join(" - ");
+                    const label = [
+                      v.talla,
+                      v.color,
+                      v.modelo,
+                      v.capacidad,
+                    ]
+                      .filter(Boolean)
+                      .join(" - ");
 
                     return (
                       <Button
@@ -243,39 +250,23 @@ export default function ProductoDetalle() {
                   : stockTotal
               )}
             >
-              {tieneVariantes
-                ? varianteSeleccionada
-                  ? varianteSeleccionada.stock > 0
-                    ? "Agregar al carrito"
-                    : "Agotado"
-                  : "Seleccionar opción"
-                : stockTotal > 0
-                ? "Agregar al carrito"
-                : "Agotado"}
+              Agregar al carrito
             </Button>
-
           </Stack>
         </Grid>
       </Grid>
 
-      {/* 🔍 ZOOM */}
-      <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)} maxWidth="md">
-        <Box
-          sx={{
-            position: "relative",
-            bgcolor: theme.palette.background.default,
-          }}
-        >
+      {/* ZOOM */}
+      <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)}>
+        <Box sx={{ position: "relative" }}>
           <IconButton
             onClick={() => setZoomOpen(false)}
             sx={{
               position: "absolute",
               top: 10,
               right: 10,
-              zIndex: 2,
-              bgcolor: "rgba(0,0,0,0.7)",
+              bgcolor: "black",
               color: "#fff",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.9)" },
             }}
           >
             <CloseIcon />
@@ -284,17 +275,15 @@ export default function ProductoDetalle() {
           <Box
             component="img"
             src={zoomImage}
-            onClick={() => setZoomOpen(false)}
             sx={{
               maxHeight: "80vh",
               maxWidth: "100%",
               display: "block",
-              margin: "0 auto",
-              cursor: "zoom-out",
+              margin: "auto",
             }}
           />
         </Box>
       </Dialog>
     </Box>
   );
-}
+      }
