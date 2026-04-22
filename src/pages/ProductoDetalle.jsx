@@ -49,46 +49,64 @@ export default function ProductoDetalle() {
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
 
-  // 🔥 FETCH
+  // 🔥 FETCH SEGURO
   useEffect(() => {
     const fetchProducto = async () => {
       try {
-        const res = await fetch(`https://backvariantes.onrender.com/api/productos/${id}/`) ;
+        const res = await fetch(
+          `https://backvariantes.onrender.com/api/productos/${id}/`
+        );
+
+        if (!res.ok) throw new Error("Error en API");
+
         const data = await res.json();
+
+        console.log("✅ PRODUCTO:", data);
+
         setProducto(data);
-        setVarianteSeleccionada(null); // 🔥 RESET
+        setVarianteSeleccionada(null);
       } catch (error) {
-        console.error(error);
+        console.error("❌ ERROR:", error);
+        setProducto(false);
       }
     };
 
     fetchProducto();
   }, [id]);
 
-  // 🔒 cerrar zoom si pasa algo global
+  // 🔒 cerrar zoom
   useEffect(() => {
     const handleMenuOpen = () => setZoomOpen(false);
     window.addEventListener("menuOpen", handleMenuOpen);
     return () => window.removeEventListener("menuOpen", handleMenuOpen);
   }, []);
 
-  if (!producto) return <Typography>Cargando...</Typography>;
+  // ✅ CONTROL DE ESTADOS (CLAVE)
+  if (producto === null) return <Typography>Cargando...</Typography>;
+  if (producto === false)
+    return <Typography>Error cargando producto</Typography>;
+  if (!producto || typeof producto !== "object") return null;
 
-  const tieneVariantes = producto.variantes?.length > 0;
+  const tieneVariantes = producto?.variantes?.length > 0;
 
-  // 🔥 EXTRAER IMÁGENES
+  // 🔥 EXTRAER IMÁGENES (SOPORTA MUCHAS)
   const extraerImagenes = (obj) => {
     if (!obj) return [];
 
-    const imgs = [
-      ...(obj.imagenes?.map((i) => i.imagen) || []),
-      obj.imagen,
-    ];
+    let imgs = [];
+
+    if (Array.isArray(obj.imagenes)) {
+      imgs.push(...obj.imagenes.map((i) => i.imagen));
+    }
+
+    if (obj.imagen) {
+      imgs.push(obj.imagen);
+    }
 
     return imgs.filter(Boolean);
   };
 
-  // 🖼 IMÁGENES
+  // 🖼 IMÁGENES DINÁMICAS
   const imagenes = useMemo(() => {
     const imgsVariante = extraerImagenes(varianteSeleccionada);
 
@@ -106,6 +124,7 @@ export default function ProductoDetalle() {
 
   const stockTotal = useMemo(() => {
     if (!producto.variantes?.length) return producto.stock || 1;
+
     return producto.variantes.reduce(
       (acc, v) => acc + (v.stock || 0),
       0
@@ -115,7 +134,7 @@ export default function ProductoDetalle() {
   // 🛒 AGREGAR
   const handleAdd = async () => {
     if (!isAuthenticated) {
-      toast.info("Inicia sesión para agregar productos al carrito");
+      toast.info("Inicia sesión para agregar productos");
       navigate("/login", { state: { from: location } });
       return;
     }
@@ -168,9 +187,13 @@ export default function ProductoDetalle() {
         <Grid item xs={12} md={6}>
           <Box sx={imagenContainerSx(theme)}>
             {imagenes.length > 0 ? (
-              <Slider key={imagenes.length} {...settings}>
+              <Slider key={imagenes.join("-")} {...settings}>
                 {imagenes.map((img, i) => (
-                  <Box key={i} onClick={() => handleZoom(img)} sx={imagenSlideSx}>
+                  <Box
+                    key={i}
+                    onClick={() => handleZoom(img)}
+                    sx={imagenSlideSx}
+                  >
                     <Box component="img" src={img} sx={imagenSx} />
                   </Box>
                 ))}
@@ -200,7 +223,8 @@ export default function ProductoDetalle() {
 
                 <Stack direction="row" sx={variantesContainerSx}>
                   {producto.variantes.map((v) => {
-                    const isSelected = varianteSeleccionada?.id === v.id;
+                    const isSelected =
+                      varianteSeleccionada?.id === v.id;
 
                     const label = [
                       ...new Set(
@@ -270,7 +294,12 @@ export default function ProductoDetalle() {
 
       {/* ZOOM */}
       <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)} maxWidth="md">
-        <Box sx={{ position: "relative", bgcolor: theme.palette.background.default }}>
+        <Box
+          sx={{
+            position: "relative",
+            bgcolor: theme.palette.background.default,
+          }}
+        >
           <IconButton
             onClick={() => setZoomOpen(false)}
             sx={{
@@ -302,4 +331,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-                        }
+    }
