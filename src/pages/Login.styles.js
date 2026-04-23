@@ -15,7 +15,7 @@ const loginStyles = {
     flexDirection: "column",
     gap: 3,
 
-    // BORDE PRO
+    // BORDE 
     border: "1px solid",
 borderColor:
   theme.palette.mode === "dark"
