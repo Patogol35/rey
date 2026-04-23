@@ -1,11 +1,19 @@
 const registerStyles = {
   container: (theme) => ({
-    minHeight: "75vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    p: 2,
-  }),
+  minHeight: "75vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  p: 2,
+
+  border: "1px solid",
+  borderColor:
+    theme.palette.mode === "dark"
+      ? "#ffffff"
+      : "#000000",
+
+  borderRadius: 3, 
+}),
 
   paper: (theme) => ({
     p: 4,
