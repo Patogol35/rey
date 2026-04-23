@@ -1,45 +1,46 @@
-// NavButton.styles.js
-const navButtonStyles = (theme, isActive, item, alwaysColoredPaths) => {
-  const isColored =
-    isActive || alwaysColoredPaths.includes(item.path);
+const navButtonStyles = (theme, isActive, item, alwaysColoredPaths) => ({
+  fontSize: "1.05rem",
+  fontWeight: 600,
+  color: "#fff",
+  borderRadius: "12px",
+  textTransform: "none",
+  width: "100%",
+  py: 1.2,
+  transition: "all 0.25s ease",
+  "& .MuiButton-startIcon": { color: "#fff" },
 
-  const baseBg =
-    theme.breakpoints.up("md")
-      ? isColored
+  // Fondo dinámico
+  background: {
+    xs: item.color, // móvil siempre con color
+    md:
+      isActive || alwaysColoredPaths.includes(item.path)
         ? item.color
-        : "transparent"
-      : item.color;
+        : "transparent",
+  },
 
-  return {
-    fontSize: "1.05rem",
-    fontWeight: 600,
-    color: "#fff",
-    borderRadius: "12px",
-    textTransform: "none",
-    width: "100%",
-    py: 1.2,
-    transition: "all 0.25s ease",
-    "& .MuiButton-startIcon": { color: "#fff" },
+  // Estado activo
+  boxShadow: isActive ? "0 0 20px rgba(255,255,255,0.5)" : "none",
+  transform: isActive ? "scale(1.04)" : "scale(1)",
 
-    // ✅ Fondo base bien calculado
-    backgroundColor: baseBg,
-
-    // ✅ Activo
-    boxShadow: isActive ? "0 0 20px rgba(255,255,255,0.5)" : "none",
-    transform: isActive ? "scale(1.04)" : "scale(1)",
-
-    // ✅ Hover SIEMPRE aplica color
-    "&:hover": {
-      backgroundColor: item.color,
-      boxShadow: isActive
-        ? "0 0 20px rgba(0,0,0,0.4)"
-        : "0 4px 12px rgba(0,0,0,0.25)",
+  // 🔥 HOVER FIX
+  "&:hover": {
+    background: {
+      xs: item.color,
+      md: item.color, // 👈 AQUÍ está la clave
     },
+    boxShadow: isActive
+      ? "0 0 20px rgba(0,0,0,0.4)"
+      : "0 0 12px rgba(0,0,0,0.25)",
+    filter: "brightness(1.1)",
+  },
 
-    ...(theme.palette.mode === "dark" && {
-      color: "#fff",
-    }),
-  };
-};
+  // Dark mode
+  ...(theme.palette.mode === "dark" && {
+    color: "#fff",
+    "&:hover": {
+      filter: "brightness(1.2)",
+    },
+  }),
+});
 
 export default navButtonStyles;
