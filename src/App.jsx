@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Home from "./pages/Home";
@@ -8,11 +8,19 @@ import Carrito from "./pages/Carrito";
 import Pedidos from "./pages/Pedidos";
 import ProductoDetalle from "./pages/ProductoDetalle";
 
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+
+// =====================
+// 🔐 RUTA PÚBLICA (bloquea login si ya hay sesión)
+// =====================
+function PublicRoute({ children }) {
+  const { user } = useAuth();
+  return !user ? children : <Navigate to="/" replace />;
+}
 
 function App() {
   return (
@@ -22,10 +30,30 @@ function App() {
           <CarritoProvider>
             <Routes>
               <Route element={<Layout />}>
+                {/* HOME */}
                 <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
 
+                {/* LOGIN */}
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <Login />
+                    </PublicRoute>
+                  }
+                />
+
+                {/* REGISTER */}
+                <Route
+                  path="/register"
+                  element={
+                    <PublicRoute>
+                      <Register />
+                    </PublicRoute>
+                  }
+                />
+
+                {/* CARRITO (PROTEGIDO) */}
                 <Route
                   path="/carrito"
                   element={
@@ -35,6 +63,7 @@ function App() {
                   }
                 />
 
+                {/* PEDIDOS (PROTEGIDO) */}
                 <Route
                   path="/pedidos"
                   element={
@@ -44,6 +73,7 @@ function App() {
                   }
                 />
 
+                {/* DETALLE PRODUCTO */}
                 <Route
                   path="/producto/:id"
                   element={<ProductoDetalle />}
