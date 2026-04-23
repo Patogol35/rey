@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { getPedidos } from "../api/api";
+import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../context/AuthContext";
 import {
   Container,
