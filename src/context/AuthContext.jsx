@@ -6,66 +6,45 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [access, setAccess] = useState(null);
   const [refresh, setRefresh] = useState(null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);   // ðŸ‘ˆ nuevo
   const [loading, setLoading] = useState(true);
 
-  // =====================
-  // 🔄 RECUPERAR TOKENS
-  // =====================
+  // Recuperar tokens al cargar y obtener perfil
   useEffect(() => {
     const savedAccess = localStorage.getItem("access");
     const savedRefresh = localStorage.getItem("refresh");
-
-    if (savedAccess) {
-      setAccess(savedAccess);
-      setRefresh(savedRefresh);
-    } else {
-      setLoading(false); // 👈 sin token → no esperar nada
-    }
+    if (savedAccess) setAccess(savedAccess);
+    if (savedRefresh) setRefresh(savedRefresh);
   }, []);
 
-  // =====================
-  // 👤 OBTENER PERFIL
-  // =====================
+  // Cada vez que tengamos access, pedimos el perfil
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!access) {
+      if (access) {
+        try {
+          const data = await getUserProfile(access);
+          setUser(data); // guarda username, email, id
+        } catch (err) {
+          console.error("Error obteniendo perfil:", err);
+          setUser(null);
+        }
+      } else {
         setUser(null);
-        return;
       }
-
-      try {
-        const data = await getUserProfile(access);
-        setUser(data);
-      } catch (err) {
-        console.error("Error obteniendo perfil:", err);
-        setUser(null);
-      } finally {
-        setLoading(false); // 👈 termina loading aquí
-      }
+      setLoading(false);
     };
-
     fetchProfile();
   }, [access]);
 
   const isAuthenticated = !!access;
 
-  // =====================
-  // 🔐 LOGIN (NORMAL + GOOGLE)
-  // =====================
   const login = (accessToken, refreshToken) => {
-    setLoading(true); // 👈 CLAVE: evita parpadeo
-
     localStorage.setItem("access", accessToken);
     localStorage.setItem("refresh", refreshToken);
-
     setAccess(accessToken);
     setRefresh(refreshToken);
   };
 
-  // =====================
-  // 🚪 LOGOUT
-  // =====================
   const logout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
@@ -75,16 +54,8 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({
-      access,
-      refresh,
-      user,
-      isAuthenticated,
-      login,
-      logout,
-      loading,
-    }),
-    [access, refresh, user, isAuthenticated, loading]
+    () => ({ access, refresh, isAuthenticated, user, login, logout, loading }),
+    [access, refresh, isAuthenticated, user, loading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
