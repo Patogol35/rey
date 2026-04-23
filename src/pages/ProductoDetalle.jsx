@@ -79,7 +79,7 @@ export default function ProductoDetalle() {
       .filter(Boolean);
   }, [producto, varianteSeleccionada]);
 
-  // CONTROL  DE MINIATURAS
+  // 🔥 CONTROL REAL DE MINIATURAS
   const mostrarMiniaturas = useMemo(() => {
     if (varianteSeleccionada) {
       return varianteSeleccionada.imagenes?.length > 1;
@@ -320,4 +320,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-              }
+}
