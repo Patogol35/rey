@@ -23,10 +23,13 @@ export const botonVolverSx = (theme) => ({
   fontWeight: 500,
   px: 2,
   py: 0.6,
+
   border: "1px solid",
   borderColor: theme.palette.divider,
+
   color: theme.palette.text.primary,
   backdropFilter: "blur(6px)",
+
   transition: "all 0.25s ease",
 
   "&:hover": {
@@ -47,7 +50,7 @@ export const imagenWrapperSx = {
 };
 
 // ================================
-// 🔥 MINIATURAS (MEJORADAS)
+// MINIATURAS (CORREGIDO DARK/LIGHT)
 // ================================
 export const miniaturasContainerSx = {
   display: "flex",
@@ -56,7 +59,6 @@ export const miniaturasContainerSx = {
   overflowX: "auto",
   padding: "4px",
 
-  // Scroll más limpio
   "&::-webkit-scrollbar": {
     height: 6,
     width: 6,
@@ -67,7 +69,7 @@ export const miniaturasContainerSx = {
   },
 };
 
-export const miniaturaSx = (activa) => ({
+export const miniaturaSx = (activa, theme) => ({
   width: 70,
   height: 70,
   objectFit: "cover",
@@ -75,7 +77,9 @@ export const miniaturaSx = (activa) => ({
   cursor: "pointer",
   flexShrink: 0,
 
-  border: activa ? "2px solid #1976d2" : "1px solid #ddd",
+  border: activa
+    ? `2px solid ${theme.palette.primary.main}`
+    : `1px solid ${theme.palette.divider}`,
 
   opacity: activa ? 1 : 0.7,
 
@@ -108,7 +112,7 @@ export const imagenContainerSx = (theme) => ({
   maxWidth: 240,
 
   border: "1px solid",
-  borderColor: theme.palette.mode === "dark" ? "#fff" : "#000",
+  borderColor: theme.palette.divider,
 
   boxShadow:
     theme.palette.mode === "dark"
@@ -116,7 +120,7 @@ export const imagenContainerSx = (theme) => ({
       : "0 20px 50px rgba(0,0,0,0.08)",
 
   overflow: "hidden",
-  transition: "all 0.3s ease",
+  transition: "all 0.25s ease",
 
   "&:hover": {
     transform: "scale(1.01)",
@@ -181,7 +185,7 @@ export const tituloSx = {
 export const precioSx = (theme) => ({
   fontWeight: 800,
   fontSize: "2rem",
-  color: theme.palette.mode === "dark" ? "#66b2ff" : "#0d47a1",
+  color: theme.palette.primary.main,
 });
 
 // ================================
@@ -208,7 +212,7 @@ export const stockSx = (stock) => ({
 });
 
 // ================================
-// VARIANTES
+// VARIANTES (CORREGIDO)
 // ================================
 export const variantesContainerSx = {
   display: "flex",
@@ -217,40 +221,35 @@ export const variantesContainerSx = {
   gap: 1,
 };
 
-export const varianteBtnSx = (isSelected, stock, theme) => {
-  const isDark = theme.palette.mode === "dark";
+export const varianteBtnSx = (isSelected, stock, theme) => ({
+  borderRadius: "999px",
+  textTransform: "none",
+  fontWeight: 500,
+  px: 2,
+  py: 0.7,
 
-  return {
-    borderRadius: "999px",
-    textTransform: "none",
-    fontWeight: 500,
-    px: 2,
-    py: 0.7,
+  border: "1px solid",
+  borderColor: theme.palette.divider,
 
-    border: "1px solid",
-    borderColor: isDark ? "#fff" : "#000",
+  backgroundColor: isSelected
+    ? theme.palette.primary.main
+    : theme.palette.action.hover,
 
-    backgroundColor: isSelected ? "#000" : "#e3f2fd",
+  color: isSelected
+    ? theme.palette.primary.contrastText
+    : theme.palette.text.primary,
 
-    color: isSelected
-      ? "#fff"
-      : isDark
-      ? "#000"
-      : theme.palette.text.primary,
+  opacity: stock === 0 ? 0.4 : 1,
 
-    opacity: stock === 0 ? 0.4 : 1,
-    transition: "all 0.25s ease",
+  transition: "all 0.25s ease",
 
-    "&:hover": {
-      transform: stock > 0 ? "scale(1.05)" : "none",
-      backgroundColor: isSelected
-        ? "#000"
-        : isDark
-        ? "rgba(144,202,249,0.4)"
-        : "#bbdefb",
-    },
-  };
-};
+  "&:hover": {
+    transform: stock > 0 ? "scale(1.05)" : "none",
+    backgroundColor: isSelected
+      ? theme.palette.primary.dark
+      : theme.palette.action.selected,
+  },
+});
 
 // ================================
 // DESCRIPCIÓN
