@@ -79,8 +79,8 @@ logoutBtn: (theme) => ({
   transition: "all 0.25s ease",
 
   background: {
-    xs: "#d32f2f",
-    md: "transparent",
+    xs: menuColors.logout,
+    md: menuColors.logout, 
   },
 
   "& .MuiButton-startIcon": { color: "#fff" },
@@ -96,7 +96,7 @@ logoutBtn: (theme) => ({
     },
   }),
 }),
-
+  
 drawerUtilStack: {
 mt: 3,
 pb: 2,
