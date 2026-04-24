@@ -1,8 +1,4 @@
 const navButtonStyles = (theme, isActive, item, alwaysColoredPaths) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-start",
-
   fontSize: "1.05rem",
   fontWeight: 600,
   color: "#fff",
@@ -10,46 +6,39 @@ const navButtonStyles = (theme, isActive, item, alwaysColoredPaths) => ({
   textTransform: "none",
   width: "100%",
   py: 1.2,
-
-  transition: "background 0.25s ease, box-shadow 0.25s ease",
-
+  transition: "all 0.25s ease",
   "& .MuiButton-startIcon": { color: "#fff" },
-
-  // 🔥 IMPORTANTE: evita espacios raros
-  lineHeight: 1,
-  minHeight: "unset",
 
   // Fondo dinámico
   background: {
-    xs: item.color,
+    xs: item.color, // móvil siempre con color
     md:
       isActive || alwaysColoredPaths.includes(item.path)
         ? item.color
         : "transparent",
   },
 
-  // Estado activo (SIN transform)
-  boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.25)" : "none",
+  // Estado activo
+  boxShadow: isActive ? "0 0 20px rgba(255,255,255,0.5)" : "none",
+  transform: isActive ? "scale(1.04)" : "scale(1)",
 
-  // 🔥 HOVER LIMPIO (SIN MOVE NI SCALE)
+  // 🔥 HOVER FIX
   "&:hover": {
     background: {
       xs: item.color,
-      md: item.color,
+      md: item.color, // 👈 AQUÍ está la clave
     },
     boxShadow: isActive
-      ? "0 6px 18px rgba(0,0,0,0.35)"
-      : "0 4px 12px rgba(0,0,0,0.25)",
+      ? "0 0 20px rgba(0,0,0,0.4)"
+      : "0 0 12px rgba(0,0,0,0.25)",
+    filter: "brightness(1.1)",
   },
 
-  // 🌙 DARK MODE
+  // Dark mode
   ...(theme.palette.mode === "dark" && {
+    color: "#fff",
     "&:hover": {
-      background: {
-        xs: item.color,
-        md: item.color,
-      },
-      boxShadow: "0 6px 20px rgba(0,0,0,0.6)",
+      filter: "brightness(1.2)",
     },
   }),
 });
