@@ -35,7 +35,7 @@ const navButtonStyles = (theme, isActive, item, alwaysColoredPaths) => ({
   transform: "scale(1.02)", // 👈 MÁS SUAVE
   transformOrigin: "center", // 👈 clave para que no “empuje” abajo
 },
-  }),
+  
 });
 
 export default navButtonStyles;
