@@ -25,7 +25,10 @@ export const botonVolverSx = (theme) => ({
   py: 0.6,
 
   border: "1px solid",
-  borderColor: theme.palette.divider,
+  borderColor:
+  theme.palette.mode === "dark"
+    ? "rgba(255,255,255,0.25)" // blanco suave
+    : "rgba(0,0,0,0.2)",       // negro suave
 
   color: theme.palette.text.primary,
   backdropFilter: "blur(6px)",
