@@ -77,7 +77,7 @@ export default function Home() {
       </Box>
 
       {/* FILTROS */}
-      <Paper elevation={4} sx={styles.filtersContainer}>
+      <Paper elevation={4} sx={(theme) => styles.filtersContainer(theme)}>
         <TextField
           label="Buscar producto"
           size="small"
