@@ -26,14 +26,11 @@ const navButtonStyles = (theme, isActive, item, alwaysColoredPaths) => ({
   "&:hover": {
   background: {
     xs: item.color,
-    md: `linear-gradient(135deg, ${item.color} 0%, ${item.color}e6 100%)`,
+    md: item.color,
   },
   boxShadow: isActive
     ? "0 0 20px rgba(0,0,0,0.4)"
     : "0 0 12px rgba(0,0,0,0.25)",
-
-  transform: "scale(1.02)", // 👈 MÁS SUAVE
-  transformOrigin: "center", // 👈 clave para que no “empuje” abajo
 },
   
 });
