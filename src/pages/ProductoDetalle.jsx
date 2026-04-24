@@ -189,7 +189,7 @@ export default function ProductoDetalle() {
                     component="img"
                     src={img}
                     onClick={() => cambiarImagen(img)}
-                    sx={miniaturaSx(imagenMostrada === img)}
+                    sx={(theme) => miniaturaSx(imagenMostrada === img, theme)}
                   />
                 ))}
               </Box>
