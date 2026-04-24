@@ -18,6 +18,7 @@ const styles = {
   },
   filtersContainer: (theme) => ({
   p: 3,
+    transition: "all 0.25s ease",
   borderRadius: 3,
   display: "flex",
   flexDirection: { xs: "column", sm: "row" },
