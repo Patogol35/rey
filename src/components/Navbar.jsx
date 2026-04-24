@@ -40,8 +40,8 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [pendingLogout, setPendingLogout] = useState(false);
   const scrolled = useScrollTrigger(50);
+
   const [menuSnapshot, setMenuSnapshot] = useState(
     isAuthenticated ? authMenu : guestMenu
   );
@@ -66,18 +66,16 @@ export default function Navbar() {
 
   const handleCloseMenu = useCallback(() => setOpen(false), []);
 
+  // ✅ LOGOUT ARREGLADO
   const handleLogout = useCallback(() => {
-    setPendingLogout(true);
     handleCloseMenu();
-  }, [handleCloseMenu]);
 
-  const handleDrawerTransitionEnd = () => {
-    if (!open && pendingLogout) {
+    // pequeño delay para que cierre bonito el drawer
+    setTimeout(() => {
       logout();
       navigate("/login");
-      setPendingLogout(false);
-    }
-  };
+    }, 250);
+  }, [handleCloseMenu, logout, navigate]);
 
   const textColor = () => "#fff";
 
@@ -118,21 +116,10 @@ export default function Navbar() {
         position="fixed"
         elevation={scrolled ? 6 : 2}
         sx={(theme) => styles.appBar(theme, scrolled)}
-        initial={{
-          opacity: 0,
-          transform: "translateY(-100%)",
-        }}
-        animate={{
-          opacity: 1,
-          transform: "translateY(0%)",
-        }}
-        transition={{
-          duration: 0.7,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        style={{
-          willChange: "transform, opacity",
-        }}
+        initial={{ opacity: 0, transform: "translateY(-100%)" }}
+        animate={{ opacity: 1, transform: "translateY(0%)" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        style={{ willChange: "transform, opacity" }}
       >
         <Toolbar sx={styles.toolbar}>
           <Typography
@@ -183,7 +170,6 @@ export default function Navbar() {
         anchor="right"
         open={open}
         onClose={handleCloseMenu}
-        onTransitionEnd={handleDrawerTransitionEnd} 
         sx={{ display: { xs: "block", md: "none" } }}
         PaperProps={{
           sx: (theme) => styles.drawerPaper(theme),
@@ -217,4 +203,4 @@ export default function Navbar() {
       </Drawer>
     </>
   );
-                       }
+          }
