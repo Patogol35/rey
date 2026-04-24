@@ -16,16 +16,30 @@ const styles = {
     justifyContent: "center",
     fontWeight: "bold",
   },
-  filtersContainer: {
-    p: 3,
-    borderRadius: 3,
-    display: "flex",
-    flexDirection: { xs: "column", sm: "row" },
-    gap: 2,
-    justifyContent: "center",
-    alignItems: "center",
-    mb: 4,
-  },
+  filtersContainer: (theme) => ({
+  p: 3,
+  borderRadius: 3,
+  display: "flex",
+  flexDirection: { xs: "column", sm: "row" },
+  gap: 2,
+  justifyContent: "center",
+  alignItems: "center",
+  mb: 4,
+
+  // 🎨 MODO CLARO / OSCURO
+  bgcolor: theme.palette.background.paper,
+
+  border: "1px solid",
+  borderColor:
+    theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.15)"
+      : "rgba(0,0,0,0.12)",
+
+  boxShadow:
+    theme.palette.mode === "dark"
+      ? "0 6px 18px rgba(0,0,0,0.5)"
+      : "0 6px 16px rgba(0,0,0,0.1)",
+}),
   searchField: {
     minWidth: 250,
   },
