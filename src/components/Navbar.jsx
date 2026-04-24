@@ -35,12 +35,15 @@ import styles from "./Navbar.styles";
 const MotionAppBar = motion(AppBar);
 
 export default function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout, user, loading } = useAuth(); // 👈 IMPORTANTE
   const { mode, toggleMode } = useThemeMode();
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const scrolled = useScrollTrigger(50);
+
+  // 🚫 Evita flicker mientras carga auth
+  if (loading) return null;
 
   const menuItems = useMemo(
     () => (isAuthenticated ? authMenu : guestMenu),
@@ -48,22 +51,18 @@ export default function Navbar() {
   );
 
   const handleToggleMenu = useCallback(() => {
-  setOpen((prev) => {
-    const next = !prev;
-
-    if (next) {
-      window.dispatchEvent(new Event("menuOpen")); // 👈 AQUÍ
-    }
-
-    return next;
-  });
-}, []);
+    setOpen((prev) => {
+      const next = !prev;
+      if (next) window.dispatchEvent(new Event("menuOpen"));
+      return next;
+    });
+  }, []);
 
   const handleCloseMenu = useCallback(() => setOpen(false), []);
 
   const handleLogout = useCallback(() => {
-    logout();
-    navigate("/login");
+    logout(); // 👈 limpia estado primero
+    navigate("/login", { replace: true }); // 👈 evita volver atrás
     handleCloseMenu();
   }, [logout, navigate, handleCloseMenu]);
 
@@ -95,10 +94,21 @@ export default function Navbar() {
       </Stack>
     );
 
-  const MenuList = ({ onClick }) =>
-    menuItems.map((item, idx) => (
-      <NavButton key={idx} item={item} onClick={onClick} />
-    ));
+  const MenuList = ({ onClick }) => (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={isAuthenticated ? "auth" : "guest"} // 👈 clave para animación limpia
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {menuItems.map((item, idx) => (
+          <NavButton key={idx} item={item} onClick={onClick} />
+        ))}
+      </motion.div>
+    </AnimatePresence>
+  );
 
   return (
     <>
@@ -106,21 +116,9 @@ export default function Navbar() {
         position="fixed"
         elevation={scrolled ? 6 : 2}
         sx={(theme) => styles.appBar(theme, scrolled)}
-        initial={{
-          opacity: 0,
-          transform: "translateY(-100%)",
-        }}
-        animate={{
-          opacity: 1,
-          transform: "translateY(0%)",
-        }}
-        transition={{
-          duration: 0.7,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        style={{
-          willChange: "transform, opacity",
-        }}
+        initial={{ opacity: 0, transform: "translateY(-100%)" }}
+        animate={{ opacity: 1, transform: "translateY(0%)" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <Toolbar sx={styles.toolbar}>
           <Typography
@@ -204,4 +202,4 @@ export default function Navbar() {
       </Drawer>
     </>
   );
-    }
+              }
