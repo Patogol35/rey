@@ -23,6 +23,7 @@ import {
   containerSx,
   botonVolverSx,
   imagenContainerSx,
+  dividerSx
   imagenSx,
   tituloSx,
   precioSx,
@@ -250,7 +251,7 @@ export default function ProductoDetalle() {
               </>
             )}
 
-            <Divider sx={{ width: "100%" }} />
+            <Divider sx={dividerSx} />
 
             <Typography sx={descripcionSx}>
               {producto.descripcion}
