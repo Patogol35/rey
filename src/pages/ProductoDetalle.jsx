@@ -53,6 +53,19 @@ export default function ProductoDetalle() {
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
 
+
+  useEffect(() => {
+    const handleMenuOpen = () => {
+      setZoomOpen(false);
+    };
+
+    window.addEventListener("menuOpen", handleMenuOpen);
+
+    return () => {
+      window.removeEventListener("menuOpen", handleMenuOpen);
+    };
+  }, []);
+
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
   const tieneVariantes = producto.variantes?.length > 0;
@@ -71,24 +84,19 @@ export default function ProductoDetalle() {
         .filter(Boolean);
     }
 
-    return [
-      producto.imagen,
-      ...(producto.imagenes || []),
-    ]
+    return [producto.imagen, ...(producto.imagenes || [])]
       .map(getImagen)
       .filter(Boolean);
   }, [producto, varianteSeleccionada]);
 
-  // 🔥 CONTROL REAL DE MINIATURAS
   const mostrarMiniaturas = useMemo(() => {
     if (varianteSeleccionada) {
       return varianteSeleccionada.imagenes?.length > 1;
     }
 
-    const totalProductoImgs =
-      [producto.imagen, ...(producto.imagenes || [])]
-        .map(getImagen)
-        .filter(Boolean).length;
+    const totalProductoImgs = [producto.imagen, ...(producto.imagenes || [])]
+      .map(getImagen)
+      .filter(Boolean).length;
 
     return totalProductoImgs > 1;
   }, [producto, varianteSeleccionada]);
@@ -159,48 +167,39 @@ export default function ProductoDetalle() {
 
         {/* IMÁGENES */}
         <Grid item xs={12} md={6}>
-  <Box sx={imagenWrapperSx}>
+          <Box sx={imagenWrapperSx}>
+            <Box
+              sx={{
+                ...imagenContainerSx(theme),
+                cursor: "zoom-in",
+              }}
+              onClick={() => {
+                setZoomImage(imagenMostrada);
+                setZoomOpen(true);
+              }}
+            >
+              <Box component="img" src={imagenMostrada} sx={imagenSx} />
+            </Box>
 
-    {/* IMAGEN PRINCIPAL */}
-    <Box
-      sx={{
-        ...imagenContainerSx(theme),
-        cursor: "zoom-in",
-      }}
-      onClick={() => {
-        setZoomImage(imagenMostrada);
-        setZoomOpen(true);
-      }}
-    >
-      <Box
-        component="img"
-        src={imagenMostrada}
-        sx={imagenSx}
-      />
-    </Box>
-
-    {/* MINIATURAS ABAJO */}
-    {mostrarMiniaturas && (
-      <Box sx={miniaturasContainerSx}>
-        {imagenes.map((img, i) => (
-          <Box
-            key={i}
-            component="img"
-            src={img}
-            onClick={() => cambiarImagen(img)}
-            sx={miniaturaSx(imagenMostrada === img)}
-          />
-        ))}
-      </Box>
-    )}
-
-  </Box>
-</Grid>
+            {mostrarMiniaturas && (
+              <Box sx={miniaturasContainerSx}>
+                {imagenes.map((img, i) => (
+                  <Box
+                    key={i}
+                    component="img"
+                    src={img}
+                    onClick={() => cambiarImagen(img)}
+                    sx={miniaturaSx(imagenMostrada === img)}
+                  />
+                ))}
+              </Box>
+            )}
+          </Box>
+        </Grid>
 
         {/* DETALLE */}
         <Grid item xs={12} md={6}>
           <Stack spacing={3} alignItems="center">
-
             <Typography variant="h4" sx={tituloSx}>
               {producto.nombre}
             </Typography>
@@ -283,7 +282,6 @@ export default function ProductoDetalle() {
                 ? "Agregar al carrito"
                 : "Agotado"}
             </Button>
-
           </Stack>
         </Grid>
       </Grid>
@@ -300,4 +298,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-}
+        }
