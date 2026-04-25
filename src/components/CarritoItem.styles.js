@@ -4,16 +4,18 @@ const carritoItemStyles = {
   card: (theme) => ({
     display: "flex",
     flexDirection: { xs: "column", sm: "row" },
-    alignItems: "stretch", 
+
+    alignItems: { xs: "stretch", sm: "center" },
+
     mb: 3,
     mx: { xs: 2, sm: 0 },
     borderRadius: 4,
 
     border: "1px solid",
-borderColor:
-  theme.palette.mode === "dark"
-    ? alpha("#fff", 0.45)
-    : alpha("#000", 0.45),
+    borderColor:
+      theme.palette.mode === "dark"
+        ? alpha("#fff", 0.3)
+        : alpha("#000", 0.2),
 
     overflow: "hidden",
     backgroundColor: theme.palette.background.paper,
@@ -30,70 +32,77 @@ borderColor:
     },
   }),
 
-  // CONTENEDOR 
+  // 🖼 CONTENEDOR IMAGEN
   mediaWrapper: (theme) => ({
-  width: { xs: "100%", sm: 180 },
-  minHeight: { xs: 180, sm: 140 },
+    width: { xs: "100%", sm: 140 },
+    height: { xs: 180, sm: 120 }, // 🔥 controla altura real
 
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
 
-  backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.action.hover,
 
-  borderRadius: { xs: "16px 16px 0 0", sm: "16px 0 0 16px" },
+    borderRadius: { xs: "16px 16px 0 0", sm: "16px 0 0 16px" },
 
-  p: 2,
-}),
-  // 🔥 IMAGEN LIMPIA
+    p: 1.5,
+  }),
+
+  // 🖼 IMAGEN
   media: {
-  width: "100%",
-  height: { xs: "auto", sm: "100%" }, 
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
 
-  maxHeight: { xs: 180, sm: "none" }, 
-
-  objectFit: "contain",
-  display: "block",
-
-  transition: "transform 0.3s ease",
-  "&:hover": {
-    transform: "scale(1.05)",
+    transition: "transform 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
   },
-},
 
+  // 📦 CONTENIDO
   content: (theme) => ({
     flex: 1,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    p: 2.5,
-    gap: 1,
-    borderColor:
-      theme.palette.mode === "dark"
-        ? alpha("#fff", 0.15)
-        : alpha("#000", 0.1),
-  }),
 
-  controlesWrapper: (theme) => ({
-    display: "flex",
-    flexDirection: { xs: "row", sm: "column" },
-    justifyContent: "center",
-    alignItems: "center",
-    p: 2,
-    gap: 1.5,
+    p: { xs: 2.5, sm: 1.5 }, // 🔥 más compacto en horizontal
+    gap: { xs: 1, sm: 0.5 },
 
     borderLeft: {
       sm: `1px solid ${
         theme.palette.mode === "dark"
-          ? alpha("#fff", 0.15)
-          : alpha("#000", 0.1)
+          ? alpha("#fff", 0.08)
+          : alpha("#000", 0.05)
       }`,
     },
+  }),
+
+  // 🎛 CONTROLES
+  controlesWrapper: (theme) => ({
+    display: "flex",
+    flexDirection: { xs: "row", sm: "column" },
+
+    justifyContent: "center",
+    alignItems: "center",
+
+    p: { xs: 2, sm: 1 },
+    gap: { xs: 1.5, sm: 1 },
+
+    borderLeft: {
+      sm: `1px solid ${
+        theme.palette.mode === "dark"
+          ? alpha("#fff", 0.08)
+          : alpha("#000", 0.05)
+      }`,
+    },
+
     borderTop: {
       xs: `1px solid ${
         theme.palette.mode === "dark"
-      ? alpha("#fff", 0.45)
-      : alpha("#000", 0.45)
+          ? alpha("#fff", 0.1)
+          : alpha("#000", 0.08)
       }`,
       sm: "none",
     },
@@ -101,9 +110,9 @@ borderColor:
 
   titulo: {
     fontWeight: 600,
-    fontSize: "1.05rem",
-    lineHeight: 1.4,
-    mb: 0.5,
+    fontSize: "1rem",
+    lineHeight: 1.3,
+    mb: 0.3,
   },
 
   descripcion: {
@@ -113,18 +122,18 @@ borderColor:
     overflow: "hidden",
     textOverflow: "ellipsis",
     color: "text.secondary",
-    fontSize: "0.88rem",
-    mb: 1.2,
+    fontSize: "0.82rem",
+    mb: 0.8,
   },
 
   chipSubtotal: {
     fontWeight: "bold",
-    fontSize: "0.95rem",
+    fontSize: "0.9rem",
   },
 
   chipStock: {
     fontWeight: "bold",
-    fontSize: "0.85rem",
+    fontSize: "0.8rem",
     opacity: 0.8,
   },
 
@@ -135,12 +144,12 @@ borderColor:
     bgcolor: "action.hover",
     borderRadius: 2,
     px: 1,
-    py: 0.5,
+    py: 0.4,
   },
 
   botonCantidad: {
-    minWidth: 32,
-    minHeight: 32,
+    minWidth: 30,
+    minHeight: 30,
     borderRadius: "50%",
     bgcolor: "background.paper",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
@@ -151,20 +160,22 @@ borderColor:
   },
 
   cantidadInput: {
-    width: 50,
+    width: 45,
     "& input": {
       textAlign: "center",
       fontWeight: "bold",
-      fontSize: "1rem",
+      fontSize: "0.95rem",
     },
   },
 
-  botonEliminar: {
+  botonEliminar: (theme) => ({
     color: "error.main",
     borderRadius: 2,
-    px: 2,
-    "&:hover": { bgcolor: "rgba(211,47,47,0.1)" },
-  },
+    px: 1.5,
+    "&:hover": {
+      bgcolor: alpha(theme.palette.error.main, 0.1),
+    },
+  }),
 };
 
 export default carritoItemStyles;
