@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
-import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 
 const ThemeModeContext = createContext();
 
@@ -8,22 +8,12 @@ export function ThemeModeProvider({ children }) {
     return localStorage.getItem("mode") || "light";
   });
 
-  const [isChanging, setIsChanging] = useState(false); // 🔥 controla el cambio
-
   const toggleMode = () => {
-    setIsChanging(true);
-
-    setTimeout(() => {
-      setMode((prev) => {
-        const newMode = prev === "light" ? "dark" : "light";
-        localStorage.setItem("mode", newMode);
-        return newMode;
-      });
-
-      setTimeout(() => {
-        setIsChanging(false);
-      }, 50); // pequeño delay para evitar el frame roto
-    }, 0);
+    setMode((prev) => {
+      const newMode = prev === "light" ? "dark" : "light";
+      localStorage.setItem("mode", newMode);
+      return newMode;
+    });
   };
 
   const theme = useMemo(
@@ -31,7 +21,6 @@ export function ThemeModeProvider({ children }) {
       createTheme({
         palette: {
           mode,
-
           primary: {
             main: mode === "dark" ? "#42a5f5" : "#1565c0",
             light: mode === "dark" ? "#64b5f6" : "#1976d2",
@@ -69,8 +58,8 @@ export function ThemeModeProvider({ children }) {
           MuiCard: {
             styleOverrides: {
               root: {
-            borderRadius: 16,
-            transition: "0.3s",
+                borderRadius: 16,
+                transition: "0.3s",
               },
             },
           },
@@ -88,7 +77,7 @@ export function ThemeModeProvider({ children }) {
           MuiCssBaseline: {
             styleOverrides: {
               body: {
-                transition: "background-color 0.3s ease, color 0.3s ease",
+                transition: "background-color 0.3s ease",
               },
             },
           },
@@ -101,16 +90,7 @@ export function ThemeModeProvider({ children }) {
     <ThemeModeContext.Provider value={{ mode, toggleMode }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-
-        {/* 🔥 evita el flicker completamente */}
-        <Box
-          sx={{
-            opacity: isChanging ? 0 : 1,
-            transition: "opacity 0.2s ease",
-          }}
-        >
-          {children}
-        </Box>
+        {children}
       </ThemeProvider>
     </ThemeModeContext.Provider>
   );
