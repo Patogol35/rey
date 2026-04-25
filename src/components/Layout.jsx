@@ -1,6 +1,6 @@
 import { Box, Container, IconButton, Badge } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCarrito } from "../context/CarritoContext";
@@ -8,13 +8,11 @@ import { useCarrito } from "../context/CarritoContext";
 export default function Layout() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // 🔥 detectar páginas de auth
-  const isAuthPage = ["/login", "/register"].includes(location.pathname);
-
+  // ✅ USAR items (no carrito)
   const { items } = useCarrito();
 
+  // 🔢 TOTAL DE PRODUCTOS
   const totalItems =
     items?.reduce(
       (acc, item) => acc + (item.cantidad || item.quantity || 0),
@@ -31,7 +29,7 @@ export default function Layout() {
         transition: "background-color 0.3s ease",
       }}
     >
-      {/* ✅ Navbar SIEMPRE visible */}
+      {/* NAVBAR */}
       <Navbar />
 
       {/* CONTENIDO */}
@@ -39,66 +37,57 @@ export default function Layout() {
         maxWidth="lg"
         sx={{
           flex: 1,
-
-          // 🔥 Ajuste inteligente de espacio
-          pt: isAuthPage
-            ? `${theme.mixins.toolbar.minHeight}px` // solo compensa navbar
-            : `calc(${theme.mixins.toolbar.minHeight}px + 24px)`,
-
-          pb: isAuthPage ? 0 : 4,
+          pt: `calc(${theme.mixins.toolbar.minHeight}px + 24px)`,
+          pb: 4,
         }}
       >
         <Outlet />
       </Container>
 
-      {/* 🛒 BOTÓN (oculto en login) */}
-      {!isAuthPage && (
-        <IconButton
-          onClick={() => navigate("/carrito")}
-          sx={{
-            position: "fixed",
-            bottom: 24,
-            right: 24,
-            zIndex: 1300,
-            width: 56,
-            height: 56,
-            borderRadius: "50%",
-            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-            color: theme.palette.primary.contrastText,
-            boxShadow:
-              theme.palette.mode === "dark"
-                ? "0 12px 30px rgba(0,0,0,0.6)"
-                : "0 10px 25px rgba(0,0,0,0.25)",
-            transition: "all 0.25s ease",
-            "&:hover": {
-              transform: "translateY(-3px) scale(1.05)",
-              background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
-            },
-          }}
-        >
-          <Badge badgeContent={totalItems} color="error">
-            <ShoppingCartIcon />
-          </Badge>
-        </IconButton>
-      )}
+      {/* 🛒 BOTÓN FLOTANTE CON CONTADOR */}
+      <IconButton
+        onClick={() => navigate("/carrito")}
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          zIndex: 1300,
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+          color: theme.palette.primary.contrastText,
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? "0 12px 30px rgba(0,0,0,0.6)"
+              : "0 10px 25px rgba(0,0,0,0.25)",
+          transition: "all 0.25s ease",
+          "&:hover": {
+            transform: "translateY(-3px) scale(1.05)",
+            background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+          },
+        }}
+      >
+        <Badge badgeContent={totalItems} color="error">
+          <ShoppingCartIcon />
+        </Badge>
+      </IconButton>
 
-      {/* FOOTER (oculto en login) */}
-      {!isAuthPage && (
-        <Box
-          component="footer"
-          sx={{
-            textAlign: "center",
-            py: 3,
-            mt: "auto",
-            color: theme.palette.text.secondary,
-            borderTop: `1px solid ${theme.palette.divider}`,
-            backgroundColor: theme.palette.background.paper,
-            transition: "background-color 0.3s ease",
-          }}
-        >
-          © 2026 · E-commerce Jorge Patricio
-        </Box>
-      )}
+      {/* FOOTER */}
+      <Box
+        component="footer"
+        sx={{
+          textAlign: "center",
+          py: 3,
+          mt: "auto",
+          color: theme.palette.text.secondary,
+          borderTop: `1px solid ${theme.palette.divider}`,
+          backgroundColor: theme.palette.background.paper,
+          transition: "background-color 0.3s ease",
+        }}
+      >
+        © 2026 · E-commerce Jorge Patricio
+      </Box>
     </Box>
   );
 }
