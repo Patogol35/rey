@@ -65,7 +65,7 @@ export function CarritoProvider({ children }) {
     }
   };
 
-  // 🛒 AGREGAR AL CARRITO (CON VARIANTES)
+  //  AGREGAR AL CARRITO (CON VARIANTES)
   const agregarAlCarrito = async (producto_id, variante_id, cantidad = 1) => {
     if (!access) throw new Error("Debes iniciar sesión.");
 
