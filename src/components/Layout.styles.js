@@ -9,7 +9,7 @@ export const layoutStyles = (theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: 1.2,
+    gap: 1.4,
 
     textAlign: "center",
 
@@ -31,25 +31,42 @@ export const layoutStyles = (theme) => ({
     lineHeight: 1.5,
 
     transition: "all 0.3s ease",
-    opacity: 0.95,
-
-    "&:hover": {
-      opacity: 1,
-    },
   },
 
   socialIcons: {
     display: "flex",
-    gap: 1,
+    gap: 1.2,
+    mt: 0.5,
 
     "& .MuiIconButton-root": {
-      color: theme.palette.text.secondary,
-      transition: "all 0.25s ease",
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? alpha("#fff", 0.05)
+          : alpha("#000", 0.04),
+
+      transition: "all 0.3s ease",
 
       "&:hover": {
-        color: theme.palette.primary.main,
-        transform: "translateY(-2px) scale(1.1)",
+        transform: "translateY(-3px) scale(1.12)",
       },
+    },
+
+    // 🔵 Facebook
+    "& .facebook:hover": {
+      color: "#1877F2",
+      boxShadow: "0 0 12px rgba(24,119,242,0.6)",
+    },
+
+    // 🟣 Instagram (gradiente glow)
+    "& .instagram:hover": {
+      color: "#E1306C",
+      boxShadow: "0 0 12px rgba(225,48,108,0.6)",
+    },
+
+    // 🔷 LinkedIn
+    "& .linkedin:hover": {
+      color: "#0A66C2",
+      boxShadow: "0 0 12px rgba(10,102,194,0.6)",
     },
   },
 });
