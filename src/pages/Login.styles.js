@@ -14,27 +14,10 @@ const loginStyles = {
   p: 4,
   borderRadius: 4,
   width: "100%",
-  display: "flex",
-  flexDirection: "column",
-  gap: 3,
 
-  // 🔥 MÁS CONTRASTE
-  backgroundColor:
-    theme.palette.mode === "dark" ? "#1e1e1e" : "#ffffff",
-
-  // 🔥 BORDE MÁS VISIBLE
-  border: "1px solid",
-  borderColor:
-    theme.palette.mode === "dark" ? "#333" : "#ddd",
-
-  // 🔥 SOMBRA MÁS FUERTE
-  boxShadow:
-    theme.palette.mode === "dark"
-      ? "0 20px 50px rgba(0,0,0,0.8)"
-      : "0 20px 50px rgba(0,0,0,0.25)",
-
-  // 🔥 EFECTO ELEVADO
-  transform: "translateY(0)",
+  backgroundColor: "white", // 👈 FORZADO
+  border: "2px solid red",  // 👈 PARA VERLO CLARO
+  boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
 }),
 
   titulo: (theme) => ({
