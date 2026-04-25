@@ -281,6 +281,6 @@ export default function Login() {
           />
         </Box>
       </Paper>
-    </Container>
+    </Box>
   );
                                      }
