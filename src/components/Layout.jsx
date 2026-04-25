@@ -75,8 +75,8 @@ export default function Layout() {
 
       {/* FOOTER (EXTERNALIZADO) */}
       <Box component="footer" sx={styles.footer}>
-        © 2026 · E-commerce Jorge Patricio
-      </Box>
+  © 2026 · Ecommerce desarrollado por Jorge Patricio Santamaría Cherrez · Todos los derechos reservados
+</Box>
     </Box>
   );
 }
