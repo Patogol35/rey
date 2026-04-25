@@ -1,13 +1,11 @@
 const loginStyles = {
   container: (theme) => ({
-  minHeight: "100vh",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start", // 🔥 ya no centra vertical exacto
-
-  pt: "8vh", // 🔥 controla cuánto baja desde arriba
-  px: 2,
-}),
+    minHeight: "75vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    p: 2,
+  }),
 
   paper: (theme) => ({
     p: 4,
@@ -18,8 +16,7 @@ const loginStyles = {
     gap: 3,
 
     // BORDE 
-    border: "1px solid",
-borderColor:
+    borderColor:
   theme.palette.mode === "dark"
     ? "rgba(255,255,255,0.5)" // más blanco visible
     : "rgba(0,0,0,0.4)",      // más negro visible
