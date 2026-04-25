@@ -120,17 +120,21 @@ export const precioStackSx = (theme) => ({
 // ================================
 // DIVIDER
 // ================================
-export const dividerSx = (theme) => ({
-  my: 1.8,
-  mx: -2.2,
-  height: "1px",
-  border: "none",
-
-  background:
+export const dividerSx = (theme) => {
+  const borderColor =
     theme.palette.mode === "dark"
-      ? "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)"
-      : "linear-gradient(to right, transparent, rgba(0,0,0,0.25), transparent)",
-});
+      ? "rgba(255,255,255,0.35)"
+      : "rgba(0,0,0,0.25)";
+
+  return {
+    my: 1.8,
+    mx: -2.2,
+    height: "1px",
+    border: "none",
+
+    backgroundColor: borderColor,
+  };
+};
 
 // ================================
 // BOTÓN AGREGAR
