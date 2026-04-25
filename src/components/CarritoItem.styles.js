@@ -83,31 +83,35 @@ fontSize: "0.85rem",
 opacity: 0.8,
 },
 
-controlesWrapper: (theme) => ({
-  display: "flex",
-  flexDirection: { xs: "row", sm: "column" },
-  justifyContent: "center",
-  alignItems: "center",
-  p: 2,
-  gap: 1.5,
+controlesWrapper: (theme) => {
+  const borderColor =
+    theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.35)"
+      : "rgba(0,0,0,0.25)";
 
-  position: "relative",
+  return {
+    display: "flex",
+    flexDirection: { xs: "row", sm: "column" },
+    justifyContent: "center",
+    alignItems: "center",
+    p: 2,
+    gap: 1.5,
 
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: { xs: 0, sm: 0 },
-    left: { xs: 0, sm: 0 },
+    position: "relative",
 
-    width: { xs: "100%", sm: "1px" },
-    height: { xs: "1px", sm: "100%" },
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
 
-    background:
-      theme.palette.mode === "dark"
-        ? "linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)"
-        : "linear-gradient(to right, transparent, rgba(0,0,0,0.2), transparent)",
-  },
-}),
+      width: { xs: "100%", sm: "1px" },
+      height: { xs: "1px", sm: "100%" },
+
+      backgroundColor: borderColor,
+    },
+  };
+},
 cantidadWrapper: {
 display: "flex",
 alignItems: "center",
