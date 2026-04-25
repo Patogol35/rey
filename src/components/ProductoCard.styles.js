@@ -12,8 +12,8 @@ export const cardSx = (theme) => ({
   border: "1px solid",
 borderColor:
   theme.palette.mode === "dark"
-    ? alpha("#fff", 0.32)
-    : alpha("#000", 0.30),
+    ? alpha("#fff", 0.45)
+    : alpha("#000", 0.45),
 
   boxShadow:
     theme.palette.mode === "dark"
