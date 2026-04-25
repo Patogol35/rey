@@ -15,7 +15,7 @@ export function CarritoProvider({ children }) {
   const [carrito, setCarrito] = useState({ items: [] });
   const [loading, setLoading] = useState(false);
 
-  // 🔄 CARGAR CARRITO
+  //  CARGAR CARRITO
   const cargarCarrito = async () => {
     if (!access) {
       setCarrito({ items: [] });
@@ -41,7 +41,7 @@ export function CarritoProvider({ children }) {
     cargarCarrito();
   }, [access]);
 
-  // 🔢 SET CANTIDAD
+  // SET CANTIDAD
   const setCantidad = async (itemId, cantidad) => {
     if (!access) throw new Error("Debes iniciar sesión.");
     if (cantidad < 1) return;
@@ -55,7 +55,7 @@ export function CarritoProvider({ children }) {
           it.id === itemId
             ? {
                 ...it,
-                ...res, // 🔥 sincroniza todo el item
+                ...res, 
               }
             : it
         ),
@@ -80,7 +80,7 @@ export function CarritoProvider({ children }) {
         );
 
         if (existente) {
-          // 🔄 actualizar item existente
+          // actualizar item existente
           return {
             ...prev,
             items: prev.items.map((it) =>
@@ -89,7 +89,7 @@ export function CarritoProvider({ children }) {
           };
         }
 
-        // 🆕 nuevo item
+        // nuevo item
         return {
           ...prev,
           items: [...prev.items, nuevoItem],
@@ -103,7 +103,7 @@ export function CarritoProvider({ children }) {
     }
   };
 
-  // 🗑 ELIMINAR ITEM
+  // ELIMINAR ITEM
   const eliminarItem = async (itemId) => {
     try {
       await apiEliminar(itemId, access);
@@ -117,10 +117,10 @@ export function CarritoProvider({ children }) {
     }
   };
 
-  // 🧹 LIMPIAR LOCAL
+  // LIMPIAR LOCAL
   const limpiarLocal = () => setCarrito({ items: [] });
 
-  // 📦 VALUE MEMO
+  // VALUE MEMO
   const value = useMemo(
     () => ({
       items: carrito.items || [],
@@ -141,5 +141,5 @@ export function CarritoProvider({ children }) {
   );
 }
 
-// 🔗 HOOK
+// HOOK
 export const useCarrito = () => useContext(CarritoContext);
