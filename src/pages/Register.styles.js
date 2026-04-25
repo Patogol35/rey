@@ -8,7 +8,7 @@ const registerStyles = {
     p: 2,
   }),
 
-  // 📦 CARD
+  //  CARD
   paper: (theme) => ({
     p: 4,
     borderRadius: 3,
