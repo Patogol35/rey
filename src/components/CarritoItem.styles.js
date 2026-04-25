@@ -37,9 +37,8 @@ borderColor:
   mediaWrapper: (theme) => ({
   width: { xs: "100%", sm: 140 },
 
-  // 🔥 FIX REAL
-  height: { xs: 180, sm: "auto" },
-  minHeight: { sm: 120 },
+  // 🔥 altura fija otra vez
+  height: { xs: 180, sm: 120 },
 
   display: "flex",
   alignItems: "center",
