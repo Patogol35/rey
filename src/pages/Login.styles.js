@@ -1,13 +1,11 @@
 const loginStyles = {
   // 🌌 CONTENEDOR PRINCIPAL
   container: () => ({
-  minHeight: "100vh",
+  minHeight: "75vh", // 👈 clave, esto elimina el espacio feo
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-
-  px: 2,
-  py: 4, // 👈 pequeño margen arriba y abajo
+  p: 2,
 }),
 
   // 📦 CARD (PAPER)
