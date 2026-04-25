@@ -39,7 +39,7 @@ export default function Carrito() {
   }, []);
 
   // =========================
-  // 💰 TOTAL
+  //  TOTAL
   // =========================
   const total = useMemo(
     () => items.reduce((acc, it) => acc + calcularSubtotal(it), 0),
@@ -47,7 +47,7 @@ export default function Carrito() {
   );
 
   // =========================
-  // 🛒 COMPRAR
+  // COMPRAR
   // =========================
   const comprar = async () => {
     try {
@@ -67,7 +67,7 @@ export default function Carrito() {
   };
 
   // =========================
-  // 🔼 INCREMENTAR (🔥 FIX VARIANTES)
+  //  INCREMENTAR 
   // =========================
   const incrementar = (it) => {
     const stock = it.variante
@@ -82,7 +82,7 @@ export default function Carrito() {
   };
 
   // =========================
-  // 🔽 DECREMENTAR
+  //  DECREMENTAR
   // =========================
   const decrementar = (it) => {
     if (it.cantidad > 1) {
