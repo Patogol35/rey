@@ -128,8 +128,8 @@ export const dividerSx = (theme) => ({
 
   background:
     theme.palette.mode === "dark"
-      ? "linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)"
-      : "linear-gradient(to right, transparent, rgba(0,0,0,0.2), transparent)",
+      ? "linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)"
+      : "linear-gradient(to right, transparent, rgba(0,0,0,0.25), transparent)",
 });
 
 // ================================
