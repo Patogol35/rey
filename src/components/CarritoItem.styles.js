@@ -33,14 +33,16 @@ card: (theme) => ({
   
 media: (theme) => ({
   width: { xs: "100%", sm: 180 },
-  height: { xs: 200, sm: "100%" }, 
-  alignSelf: "stretch",           
+  height: { xs: 200, sm: "100%" },
+  alignSelf: "stretch",
 
   objectFit: "contain",
   borderRadius: { xs: "16px 16px 0 0", sm: "16px 0 0 16px" },
 
   bgcolor: theme.palette.action.hover,
   p: 2,
+
+  boxSizing: "border-box", // 🔥 FIX
 
   transition: "transform 0.35s ease",
   "&:hover": { transform: "scale(1.08)" },
