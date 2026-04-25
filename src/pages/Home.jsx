@@ -31,10 +31,8 @@ export default function Home() {
   const [categoria, setCategoria] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("asc");
-
-  // 🔥 NUEVOS ESTADOS
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [modoModal, setModoModal] = useState("info"); // 👈 CLAVE
+  const [modoModal, setModoModal] = useState("info"); 
   const [lightbox, setLightbox] = useState(null);
 
   const categorias = useCategorias();
@@ -149,7 +147,7 @@ export default function Home() {
               <ProductoCard
                 producto={prod}
                 onAgregar={handleAdd}
-                onVerDetalle={handleVerDetalle} // 🔥 CLAVE
+                onVerDetalle={handleVerDetalle} /
               />
             </motion.div>
           </Grid>
@@ -166,7 +164,7 @@ export default function Home() {
         />
       </Box>
 
-      {/* 🔥 MODAL CON MODO */}
+      {/*  MODAL CON MODO */}
       <DetalleModal
   producto={productoSeleccionado}
   open={Boolean(productoSeleccionado)}
