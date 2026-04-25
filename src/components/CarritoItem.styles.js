@@ -1,176 +1,182 @@
-En vertical la imagen se hizo muy grande osea no dañar el diseño q estaba solo arreglar lo del fondo horizontal , va a valer o no con sinceridad
-
 import { alpha } from "@mui/material/styles";
 
 const carritoItemStyles = {
-card: (theme) => ({
-display: "flex",
-flexDirection: { xs: "column", sm: "row" },
+  card: (theme) => ({
+    display: "flex",
+    flexDirection: { xs: "column", sm: "row" },
 
-alignItems: { xs: "stretch", sm: "center" },
+    // 🔥 clave: evita que todo se estire en horizontal
+    alignItems: { xs: "stretch", sm: "center" },
 
-mb: 3,
-mx: { xs: 2, sm: 0 },
-borderRadius: 4,
+    mb: 3,
+    mx: { xs: 2, sm: 0 },
+    borderRadius: 4,
 
-border: "1px solid",
+    border: "1px solid",
 borderColor:
-theme.palette.mode === "dark"
-? alpha("#fff", 0.3)
-: alpha("#000", 0.2),
+  theme.palette.mode === "dark"
+    ? alpha("#fff", 0.45)
+    : alpha("#000", 0.45),
 
-overflow: "hidden",
-backgroundColor: theme.palette.background.paper,
+    overflow: "hidden",
+    backgroundColor: theme.palette.background.paper,
 
-boxShadow:
-theme.palette.mode === "dark"
-? "0 4px 14px rgba(0,0,0,0.6)"
-: "0 4px 12px rgba(0,0,0,0.12)",
+    boxShadow:
+      theme.palette.mode === "dark"
+        ? "0 4px 14px rgba(0,0,0,0.6)"
+        : "0 4px 12px rgba(0,0,0,0.12)",
 
-transition: "all 0.25s ease",
+    transition: "all 0.25s ease",
 
-"&:hover": {
-transform: "translateY(-2px)",
-},
+    "&:hover": {
+      transform: "translateY(-2px)",
+    },
+  }),
 
-}),
+  // 🖼 CONTENEDOR IMAGEN
+  mediaWrapper: (theme) => ({
+    width: { xs: "100%", sm: 140 },
+    height: { xs: 180, sm: 120 }, // 🔥 controla altura real
 
-// 🖼 CONTENEDOR IMAGEN
-mediaWrapper: (theme) => ({
-width: { xs: "100%", sm: 140 },
-height: { xs: 180, sm: 120 }, // 🔥 controla altura real
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
 
-display: "flex",
-alignItems: "center",
-justifyContent: "center",
+    backgroundColor: theme.palette.action.hover,
 
-backgroundColor: theme.palette.action.hover,
+    borderRadius: { xs: "16px 16px 0 0", sm: "16px 0 0 16px" },
 
-borderRadius: { xs: "16px 16px 0 0", sm: "16px 0 0 16px" },
+    p: 1.5,
+  }),
 
-p: 1.5,
+  // 🖼 IMAGEN
+  media: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
 
-}),
+    transition: "transform 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
+  },
 
-// 🖼 IMAGEN
-media: {
-width: "100%",
-height: "100%",
-objectFit: "contain",
+  // 📦 CONTENIDO
+  content: (theme) => ({
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
 
-transition: "transform 0.3s ease",
-"&:hover": {
-transform: "scale(1.05)",
-},
+    p: { xs: 2.5, sm: 1.5 }, // 🔥 más compacto en horizontal
+    gap: { xs: 1, sm: 0.5 },
 
-},
+    borderLeft: {
+      sm: `1px solid ${
+        theme.palette.mode === "dark"
+          ? alpha("#fff", 0.08)
+          : alpha("#000", 0.05)
+      }`,
+    },
+  }),
 
-// 📦 CONTENIDO
-content: (theme) => ({
-flex: 1,
-display: "flex",
-flexDirection: "column",
-justifyContent: "space-between",
+  // 🎛 CONTROLES
+  controlesWrapper: (theme) => ({
+    display: "flex",
+    flexDirection: { xs: "row", sm: "column" },
 
-p: { xs: 2.5, sm: 1.5 }, // 🔥 más compacto en horizontal
-gap: { xs: 1, sm: 0.5 },
+    justifyContent: "center",
+    alignItems: "center",
 
-borderLeft: {
-sm: 1px solid ${     theme.palette.mode === "dark"     ? alpha("#fff", 0.08)     : alpha("#000", 0.05)     },
-},
+    p: { xs: 2, sm: 1 },
+    gap: { xs: 1.5, sm: 1 },
 
-}),
+    borderLeft: {
+      sm: `1px solid ${
+        theme.palette.mode === "dark"
+          ? alpha("#fff", 0.08)
+          : alpha("#000", 0.05)
+      }`,
+    },
 
-// 🎛 CONTROLES
-controlesWrapper: (theme) => ({
-display: "flex",
-flexDirection: { xs: "row", sm: "column" },
+    borderTop: {
+      xs: `1px solid ${
+        theme.palette.mode === "dark"
+          ? alpha("#fff", 0.1)
+          : alpha("#000", 0.08)
+      }`,
+      sm: "none",
+    },
+  }),
 
-justifyContent: "center",
-alignItems: "center",
+  titulo: {
+    fontWeight: 600,
+    fontSize: "1rem",
+    lineHeight: 1.3,
+    mb: 0.3,
+  },
 
-p: { xs: 2, sm: 1 },
-gap: { xs: 1.5, sm: 1 },
+  descripcion: {
+    display: "-webkit-box",
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: "text.secondary",
+    fontSize: "0.82rem",
+    mb: 0.8,
+  },
 
-borderLeft: {
-sm: 1px solid ${     theme.palette.mode === "dark"     ? alpha("#fff", 0.08)     : alpha("#000", 0.05)     },
-},
+  chipSubtotal: {
+    fontWeight: "bold",
+    fontSize: "0.9rem",
+  },
 
-borderTop: {
-xs: 1px solid ${     theme.palette.mode === "dark"     ? alpha("#fff", 0.1)     : alpha("#000", 0.08)     },
-sm: "none",
-},
+  chipStock: {
+    fontWeight: "bold",
+    fontSize: "0.8rem",
+    opacity: 0.8,
+  },
 
-}),
+  cantidadWrapper: {
+    display: "flex",
+    alignItems: "center",
+    gap: 1,
+    bgcolor: "action.hover",
+    borderRadius: 2,
+    px: 1,
+    py: 0.4,
+  },
 
-titulo: {
-fontWeight: 600,
-fontSize: "1rem",
-lineHeight: 1.3,
-mb: 0.3,
-},
+  botonCantidad: {
+    minWidth: 30,
+    minHeight: 30,
+    borderRadius: "50%",
+    bgcolor: "background.paper",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    "&:hover": {
+      transform: "scale(1.1)",
+    },
+    transition: "all 0.2s ease",
+  },
 
-descripcion: {
-display: "-webkit-box",
-WebkitLineClamp: 2,
-WebkitBoxOrient: "vertical",
-overflow: "hidden",
-textOverflow: "ellipsis",
-color: "text.secondary",
-fontSize: "0.82rem",
-mb: 0.8,
-},
+  cantidadInput: {
+    width: 45,
+    "& input": {
+      textAlign: "center",
+      fontWeight: "bold",
+      fontSize: "0.95rem",
+    },
+  },
 
-chipSubtotal: {
-fontWeight: "bold",
-fontSize: "0.9rem",
-},
-
-chipStock: {
-fontWeight: "bold",
-fontSize: "0.8rem",
-opacity: 0.8,
-},
-
-cantidadWrapper: {
-display: "flex",
-alignItems: "center",
-gap: 1,
-bgcolor: "action.hover",
-borderRadius: 2,
-px: 1,
-py: 0.4,
-},
-
-botonCantidad: {
-minWidth: 30,
-minHeight: 30,
-borderRadius: "50%",
-bgcolor: "background.paper",
-boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-"&:hover": {
-transform: "scale(1.1)",
-},
-transition: "all 0.2s ease",
-},
-
-cantidadInput: {
-width: 45,
-"& input": {
-textAlign: "center",
-fontWeight: "bold",
-fontSize: "0.95rem",
-},
-},
-
-botonEliminar: (theme) => ({
-color: "error.main",
-borderRadius: 2,
-px: 1.5,
-"&:hover": {
-bgcolor: alpha(theme.palette.error.main, 0.1),
-},
-}),
+  botonEliminar: (theme) => ({
+    color: "error.main",
+    borderRadius: 2,
+    px: 1.5,
+    "&:hover": {
+      bgcolor: alpha(theme.palette.error.main, 0.1),
+    },
+  }),
 };
 
 export default carritoItemStyles;
