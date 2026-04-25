@@ -52,8 +52,8 @@ media: (theme) => ({
   // 🔥 mejor usarlo así (más claro y consistente)
 borderColor:
   theme.palette.mode === "dark"
-    ? "rgba(255,255,255,0.22)" 
-    : "rgba(0,0,0,0.15)",           
+    ? "rgba(255,255,255,0.25)"
+    : "rgba(0,0,0,0.18)",          
 
   transition: "transform 0.35s ease",
   "&:hover": { transform: "scale(1.08)" },
