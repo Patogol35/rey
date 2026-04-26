@@ -175,15 +175,19 @@ export default function ProductoCard({ producto, onAgregar }) {
         <Box>
           <Stack spacing={1}>
             <Button
-              variant="contained"
-              fullWidth
-              startIcon={<ShoppingCartCheckoutIcon />}
-              sx={botonAgregarSx(stockTotal)}
-              onClick={onAdd}
-              disabled={stockTotal === 0}
-            >
-              {stockTotal > 0 ? "Ver opciones" : "Agotado"}
-            </Button>
+  variant="contained"
+  fullWidth
+  startIcon={<ShoppingCartCheckoutIcon />}
+  sx={botonAgregarSx(stockTotal)}
+  onClick={() =>
+    navigate(`/producto/${producto.id}`, {
+      state: { producto },
+    })
+  }
+  disabled={stockTotal === 0}
+>
+  {stockTotal > 0 ? "Ver opciones" : "Agotado"}
+</Button>
           </Stack>
         </Box>
       </Box>
