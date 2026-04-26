@@ -16,10 +16,10 @@ textAlign: "center",
 // fondo dinámico
 background:
 theme.palette.mode === "dark"
-? "linear-gradient(135deg, #121212, #1e1e1e)" // 🌑 negro elevado (no puro)
+? linear-gradient(135deg, #121212, #1e1e1e) // 🌑 negro elevado (no puro)
 : "linear-gradient(135deg, #0A66C2, #1976d2, #42a5f5)",
 
-borderTop: "1px solid ${   theme.palette.mode === "dark"   ? alpha("#fff", 0.08)   : alpha("#fff", 0.15)   }",
+borderTop: 1px solid ${     theme.palette.mode === "dark"     ? alpha("#fff", 0.08)     : alpha("#fff", 0.15)     },
 
 color: "#fff",
 
