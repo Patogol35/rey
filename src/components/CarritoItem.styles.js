@@ -62,114 +62,92 @@ const carritoItemStyles = {
 
   //  CONTENIDO (🔥 mejorado)
   content: (theme) => {
-  const baseColor =
-    theme.palette.mode === "dark"
-      ? "rgba(255,255,255,0.25)"
-      : "rgba(0,0,0,0.25)";
+    const baseColor =
+      theme.palette.mode === "dark"
+        ? "rgba(255,255,255,0.25)"
+        : "rgba(0,0,0,0.25)";
 
-  return {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
+    return {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
 
-    p: { xs: 2.5, sm: 1.5 },
-    gap: { xs: 1, sm: 0.5 },
+      p: { xs: 2.5, sm: 1.5 },
+      gap: { xs: 1, sm: 0.5 },
 
-    position: "relative",
+      position: "relative",
 
-    // 🔥 línea superior (igual al Divider)
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 16,
-      right: 16,
-      height: "1px",
+      // línea superior (móvil)
+      "&::before": {
+        content: '""',
+        display: { xs: "block", sm: "none" },
+        position: "absolute",
+        top: 0,
+        left: 16,
+        right: 16,
+        height: "1px",
+        background: `linear-gradient(to right, transparent, ${baseColor}, transparent)`,
+      },
 
-      background: `linear-gradient(
-        to right,
-        transparent,
-        ${baseColor},
-        transparent
-      )`,
-    },
-
-    // 🔥 línea lateral (consistente)
-    "&::after": {
-      content: '""',
-      display: { xs: "none", sm: "block" },
-      position: "absolute",
-      top: 16,
-      bottom: 16,
-      left: 0,
-      width: "1px",
-
-      background: `linear-gradient(
-        to bottom,
-        transparent,
-        ${baseColor},
-        transparent
-      )`,
-    },
-  };
-},
+      // línea lateral (desktop)
+      "&::after": {
+        content: '""',
+        display: { xs: "none", sm: "block" },
+        position: "absolute",
+        top: 16,
+        bottom: 16,
+        left: 0,
+        width: "1px",
+        background: `linear-gradient(to bottom, transparent, ${baseColor}, transparent)`,
+      },
+    };
+  },
 
   // CONTROLES (🔥 mejorado)
   controlesWrapper: (theme) => {
-  const baseColor =
-    theme.palette.mode === "dark"
-      ? "rgba(255,255,255,0.25)"
-      : "rgba(0,0,0,0.25)";
+    const baseColor =
+      theme.palette.mode === "dark"
+        ? "rgba(255,255,255,0.25)"
+        : "rgba(0,0,0,0.25)";
 
-  return {
-    display: "flex",
-    flexDirection: { xs: "row", sm: "column" },
+    return {
+      display: "flex",
+      flexDirection: { xs: "row", sm: "column" },
 
-    justifyContent: "center",
-    alignItems: "center",
+      justifyContent: "center",
+      alignItems: "center",
 
-    p: { xs: 2, sm: 1 },
-    gap: { xs: 1.5, sm: 1 },
+      p: { xs: 2, sm: 1 },
+      gap: { xs: 1.5, sm: 1 },
 
-    position: "relative",
+      position: "relative",
 
-    // 🔥 línea superior (igual al Divider)
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 16,
-      right: 16,
-      height: "1px",
+      // línea superior (móvil)
+      "&::before": {
+        content: '""',
+        display: { xs: "block", sm: "none" },
+        position: "absolute",
+        top: 0,
+        left: 16,
+        right: 16,
+        height: "1px",
+        background: `linear-gradient(to right, transparent, ${baseColor}, transparent)`,
+      },
 
-      background: `linear-gradient(
-        to right,
-        transparent,
-        ${baseColor},
-        transparent
-      )`,
-    },
-
-    // 🔥 línea lateral
-    "&::after": {
-      content: '""',
-      display: { xs: "none", sm: "block" },
-      position: "absolute",
-      top: 16,
-      bottom: 16,
-      left: 0,
-      width: "1px",
-
-      background: `linear-gradient(
-        to bottom,
-        transparent,
-        ${baseColor},
-        transparent
-      )`,
-    },
-  };
-},
+      // línea lateral (desktop)
+      "&::after": {
+        content: '""',
+        display: { xs: "none", sm: "block" },
+        position: "absolute",
+        top: 16,
+        bottom: 16,
+        left: 0,
+        width: "1px",
+        background: `linear-gradient(to bottom, transparent, ${baseColor}, transparent)`,
+      },
+    };
+  },
 
   titulo: {
     fontWeight: 600,
