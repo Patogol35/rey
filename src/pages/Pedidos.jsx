@@ -171,20 +171,20 @@ export default function Pedidos() {
                         }}
                       >
                         {/* IMAGEN */}
-                        <Box
+                        
+<Box
   component="img"
   src={imagen}
   alt={item.producto?.nombre}
   sx={{
-    width: { xs: 80, sm: 90 },   
-    height: { xs: 80, sm: 90 },
+    width: { xs: 75, sm: 85 },  // 🔥 ligeramente más grande
+    height: { xs: 75, sm: 85 },
     objectFit: "contain",
     borderRadius: 2,
-    backgroundColor: "background.paper",
-    p: 1,                        
+    p: 0,                       // 🔥 sin espacio interno
+    backgroundColor: "transparent", // ❌ quitamos el fondo
   }}
 />
-
                         {/* INFO */}
                         <Box sx={{ flex: 1 }}>
                           <Typography fontWeight="bold">
