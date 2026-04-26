@@ -12,8 +12,6 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import InfoIcon from "@mui/icons-material/Info";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import StarIcon from "@mui/icons-material/Star";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -27,8 +25,10 @@ import {
   tituloSx,
   precioStackSx,
   dividerSx,
+  dividerTopSx,        
+  miniaturasStackSx,   
+  miniaturaImgSx,     
   botonAgregarSx,
-  botonDetallesSx,
 } from "./ProductoCard.styles";
 
 export default function ProductoCard({ producto, onAgregar }) {
@@ -62,11 +62,7 @@ export default function ProductoCard({ producto, onAgregar }) {
 
   const tieneVariantes = producto.variantes?.length > 0;
 
-  const tieneStockVariantes = producto.variantes?.some(
-    (v) => v.stock > 0
-  );
-
-  // 💰 PRECIO DINÁMICO
+  // 💰 PRECIO
   const precioMinimo = useMemo(() => {
     if (!tieneVariantes) return producto.precio;
 
@@ -79,7 +75,7 @@ export default function ProductoCard({ producto, onAgregar }) {
       : producto.precio;
   }, [producto, tieneVariantes]);
 
-  // 🛒 AGREGAR / IR A DETALLE
+  // 🛒 ACCIÓN
   const onAdd = async () => {
     if (!isAuthenticated) {
       toast.error("Debes iniciar sesión para agregar productos");
@@ -87,7 +83,6 @@ export default function ProductoCard({ producto, onAgregar }) {
       return;
     }
 
-    // 🔥 SI TIENE VARIANTES → IR A PÁGINA DETALLE
     if (tieneVariantes) {
       navigate(`/producto/${producto.id}`, {
         state: { producto },
@@ -95,7 +90,6 @@ export default function ProductoCard({ producto, onAgregar }) {
       return;
     }
 
-    // 🔥 SIN VARIANTES → AGREGA DIRECTO
     if (onAgregar) {
       onAgregar(producto);
       return;
@@ -113,12 +107,12 @@ export default function ProductoCard({ producto, onAgregar }) {
     <Card sx={cardSx} elevation={0}>
       {/* IMAGEN */}
       <Box sx={imagenBoxSx}>
-  <Box
-    component="img"
-    src={imagenActiva || "/placeholder.png"}
-    alt={producto.nombre}
-    sx={imagenSx}
-  />
+        <Box
+          component="img"
+          src={imagenActiva || "/placeholder.png"}
+          alt={producto.nombre}
+          sx={imagenSx}
+        />
 
         {producto.nuevo && (
           <Chip
@@ -131,22 +125,12 @@ export default function ProductoCard({ producto, onAgregar }) {
         )}
       </Box>
 
-{/* 🔥 DIVIDER DESPUÉS DE IMAGEN */}
-<Divider
-  sx={(theme) => ({
-    ...dividerSx(theme),
-    mt: 0,     // pegado a la imagen
-    mb: 1,     // pequeño espacio abajo
-  })}
-/>
+      {/* 🔥 DIVIDER SUPERIOR */}
+      <Divider sx={dividerTopSx} />
 
-{/* MINIATURAS */}
-{imagenes.length > 1 && (
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ px: 1, mt: 1, justifyContent: "center" }}
-        >
+      {/* MINIATURAS */}
+      {imagenes.length > 1 && (
+        <Stack direction="row" spacing={1} sx={miniaturasStackSx}>
           {imagenes.map((img, i) => (
             <Box
               key={i}
@@ -154,17 +138,9 @@ export default function ProductoCard({ producto, onAgregar }) {
               src={img}
               alt={`img-${i}`}
               onClick={() => setImagenActiva(img)}
-              sx={{
-                width: 45,
-                height: 45,
-                objectFit: "cover",
-                borderRadius: 1,
-                cursor: "pointer",
-                border:
-                  imagenActiva === img
-                    ? "2px solid #1976d2"
-                    : "1px solid #999",
-              }}
+              sx={(theme) =>
+                miniaturaImgSx(theme, imagenActiva === img)
+              }
             />
           ))}
         </Stack>
@@ -172,50 +148,45 @@ export default function ProductoCard({ producto, onAgregar }) {
 
       {/* CONTENIDO */}
       <Box sx={contenidoSx}>
-  {/* 🔹 PARTE SUPERIOR */}
-  <Box>
-    <Typography variant="h6" fontWeight="bold" sx={tituloSx}>
-      {producto.nombre}
-    </Typography>
+        <Box>
+          <Typography variant="h6" fontWeight="bold" sx={tituloSx}>
+            {producto.nombre}
+          </Typography>
 
-    {/* 💰 PRECIO */}
-    <Stack
-      direction="row"
-      alignItems="center"
-      spacing={0.5}
-      sx={precioStackSx}
-    >
-      <MonetizationOnIcon color="primary" />
-      <Typography variant="h6" color="primary" fontWeight="bold">
-        {tieneVariantes
-          ? `Desde $${precioMinimo}`
-          : `$${producto.precio}`}
-      </Typography>
-    </Stack>
+          {/* PRECIO */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.5}
+            sx={precioStackSx}
+          >
+            <MonetizationOnIcon color="primary" />
+            <Typography variant="h6" color="primary" fontWeight="bold">
+              {tieneVariantes
+                ? `Desde $${precioMinimo}`
+                : `$${producto.precio}`}
+            </Typography>
+          </Stack>
 
-    <Divider sx={dividerSx} />
-  </Box>
+          <Divider sx={dividerSx} />
+        </Box>
 
-  {/* 🔹 BOTONES ABAJO */}
-  <Box >
-    <Stack spacing={1}>
-      <Button
-        variant="contained"
-        fullWidth
-        startIcon={<ShoppingCartCheckoutIcon />}
-        sx={botonAgregarSx(stockTotal)}
-        onClick={() =>
-          navigate(`/producto/${producto.id}`, {
-            state: { producto },
-          })
-        }
-        disabled={stockTotal === 0}
-      >
-        {stockTotal > 0 ? "Ver opciones" : "Agotado"}
-      </Button>
-    </Stack>
-  </Box>
-</Box>
+        {/* BOTÓN */}
+        <Box>
+          <Stack spacing={1}>
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<ShoppingCartCheckoutIcon />}
+              sx={botonAgregarSx(stockTotal)}
+              onClick={onAdd}
+              disabled={stockTotal === 0}
+            >
+              {stockTotal > 0 ? "Ver opciones" : "Agotado"}
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
     </Card>
   );
-       }
+}
