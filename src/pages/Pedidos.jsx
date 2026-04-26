@@ -172,19 +172,18 @@ export default function Pedidos() {
                       >
                         {/* IMAGEN */}
                         <Box
-                          component="img"
-                          src={imagen}
-                          alt={item.producto?.nombre}
-                          sx={{
-                           width: 60,
-                           height: 60,
-                         objectFit: "contain",
-                            borderRadius: 2,
-                       backgroundColor: "background.paper", 
-                          p: 0.5, 
-                           }}
-                          
-                        />
+  component="img"
+  src={imagen}
+  alt={item.producto?.nombre}
+  sx={{
+    width: { xs: 80, sm: 90 },   
+    height: { xs: 80, sm: 90 },
+    objectFit: "contain",
+    borderRadius: 2,
+    backgroundColor: "background.paper",
+    p: 1,                        
+  }}
+/>
 
                         {/* INFO */}
                         <Box sx={{ flex: 1 }}>
