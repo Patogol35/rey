@@ -1,4 +1,5 @@
 import { alpha } from "@mui/material/styles";
+
 const pedidosStyles = {
   container: {
     mt: 4,
@@ -19,20 +20,27 @@ const pedidosStyles = {
   },
 
   card: (theme) => ({
-  mb: 3,
-  borderRadius: 3,
-  boxShadow: 3,
-  border: `1px solid ${
-    theme.palette.mode === "dark"
+    mb: 3,
+    borderRadius: 3,
+    boxShadow: 3,
+    border: `1px solid ${
+      theme.palette.mode === "dark"
         ? alpha("#fff", 0.45)
-        : alpha("#000", 0.45)
-  }`,
-  transition: "all 0.3s",
-  "&:hover": { boxShadow: 6, transform: "scale(1.01)" },
-}),
+        : alpha("#000", 0.15)
+    }`,
+    transition: "all 0.3s",
+    "&:hover": {
+      boxShadow: 6,
+      transform: "scale(1.01)",
+    },
+  }),
 
-  header: {
-    mb: 1,
+  headerBox: {
+    display: "flex",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 1,
+    mb: 2,
   },
 
   listItem: {
@@ -43,8 +51,32 @@ const pedidosStyles = {
     py: 1,
   },
 
+  itemRow: {
+    display: "flex",
+    gap: 2,
+    alignItems: "center",
+    width: "100%",
+  },
+
+  image: {
+    width: { xs: 75, sm: 85 },
+    height: { xs: 75, sm: 85 },
+    objectFit: "contain",
+    borderRadius: 2,
+    p: 0,
+    backgroundColor: "transparent",
+  },
+
+  infoBox: {
+    flex: 1,
+  },
+
   chip: {
     mt: { xs: 1, sm: 0 },
+  },
+
+  pagination: {
+    mt: 3,
   },
 
   emptyState: {
@@ -58,10 +90,7 @@ const pedidosStyles = {
   }),
 
   emptySubtitle: (theme) => ({
-    color:
-      theme.palette.mode === "dark"
-        ? "#f5f5f5"
-        : "#666",
+    color: theme.palette.mode === "dark" ? "#f5f5f5" : "#666",
   }),
 };
 
