@@ -41,8 +41,8 @@ import {
 } from "./ProductoDetalle.styles";
 
 export default function ProductoDetalle() {
-  const { state } = useLocation();
   const location = useLocation();
+const producto = location.state?.producto;
   const producto = state?.producto;
 
   const { agregarAlCarrito } = useCarrito();
@@ -66,6 +66,9 @@ export default function ProductoDetalle() {
       window.removeEventListener("menuOpen", handleMenuOpen);
     };
   }, []);
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
 
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
