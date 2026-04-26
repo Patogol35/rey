@@ -1,4 +1,4 @@
-import { alpha } from "@mui/material/styles"; 
+import { alpha } from "@mui/material/styles";
 
 // ================================
 // TARJETA PRINCIPAL
@@ -6,14 +6,13 @@ import { alpha } from "@mui/material/styles";
 export const cardSx = (theme) => ({
   width: 320,
   borderRadius: 3,
-
   bgcolor: theme.palette.background.paper,
 
   border: "1px solid",
-borderColor:
-  theme.palette.mode === "dark"
-    ? alpha("#fff", 0.45)
-    : alpha("#000", 0.45),
+  borderColor:
+    theme.palette.mode === "dark"
+      ? alpha("#fff", 0.45)
+      : alpha("#000", 0.45),
 
   boxShadow:
     theme.palette.mode === "dark"
@@ -43,9 +42,7 @@ export const imagenBoxSx = (theme) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-
   bgcolor: theme.palette.action.hover,
-
   overflow: "hidden",
 });
 
@@ -120,7 +117,7 @@ export const precioStackSx = (theme) => ({
 
 
 // ================================
-// DIVIDER
+// DIVIDER BASE
 // ================================
 export const dividerSx = (theme) => {
   const baseColor =
@@ -157,6 +154,57 @@ export const dividerSx = (theme) => {
     },
   };
 };
+
+
+// ================================
+// DIVIDER SUPERIOR (IMAGEN)
+// ================================
+export const dividerTopSx = (theme) => ({
+  ...dividerSx(theme),
+  mt: 0,
+  mb: 1,
+});
+
+
+// ================================
+// MINIATURAS CONTENEDOR
+// ================================
+export const miniaturasStackSx = {
+  px: 1,
+  mt: 1,
+  justifyContent: "center",
+};
+
+
+// ================================
+// MINIATURA IMAGEN
+// ================================
+export const miniaturaImgSx = (theme, activa) => ({
+  width: 45,
+  height: 45,
+  objectFit: "cover",
+  borderRadius: 1,
+  cursor: "pointer",
+
+  border: "2px solid",
+  borderColor: activa
+    ? theme.palette.primary.main
+    : theme.palette.mode === "dark"
+    ? "rgba(255,255,255,0.2)"
+    : "rgba(0,0,0,0.2)",
+
+  transition: "all 0.25s ease",
+
+  "&:hover": {
+    transform: "scale(1.08)",
+    borderColor: activa
+      ? theme.palette.primary.main
+      : theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.4)"
+      : "rgba(0,0,0,0.4)",
+  },
+});
+
 
 // ================================
 // BOTÓN AGREGAR
@@ -208,53 +256,4 @@ export const botonDetallesSx = (theme) => ({
     backgroundColor: theme.palette.action.hover,
     transform: "scale(1.03)",
   },
-
-  // ================================
-// MINIATURAS CONTENEDOR
-// ================================
-export const miniaturasStackSx = {
-  px: 1,
-  mt: 1,
-  justifyContent: "center",
-};
-
-
-// ================================
-// MINIATURA IMAGEN
-// ================================
-export const miniaturaImgSx = (theme, activa) => ({
-  width: 45,
-  height: 45,
-  objectFit: "cover",
-  borderRadius: 1,
-  cursor: "pointer",
-
-  border: "2px solid",
-  borderColor: activa
-    ? theme.palette.primary.main
-    : theme.palette.mode === "dark"
-    ? "rgba(255,255,255,0.2)"
-    : "rgba(0,0,0,0.2)",
-
-  transition: "all 0.25s ease",
-
-  "&:hover": {
-    transform: "scale(1.08)",
-    borderColor: activa
-      ? theme.palette.primary.main
-      : theme.palette.mode === "dark"
-      ? "rgba(255,255,255,0.4)"
-      : "rgba(0,0,0,0.4)",
-  },
-});
-
-
-// ================================
-// DIVIDER SUPERIOR (DESPUÉS IMAGEN)
-// ================================
-export const dividerTopSx = (theme) => ({
-  ...dividerSx(theme),
-  mt: 0,
-  mb: 1,
-});
 });
