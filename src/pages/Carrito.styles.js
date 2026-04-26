@@ -21,11 +21,12 @@ footerBox: (theme) => ({
   position: "static",
 
   width: "100%",
-  marginTop: "24px",
+  maxWidth: 420,
+  margin: "24px auto 0",
 
   display: "flex",
   flexDirection: "column",
-  alignItems: "stretch", 
+  alignItems: "center",
   gap: 1.2,
 
   padding: 0,
