@@ -132,12 +132,16 @@ export default function ProductoCard({ producto, onAgregar }) {
       </Box>
 
       {/* MINIATURAS */}
-      {imagenes.length > 1 && (
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ px: 1, mt: 1, justifyContent: "center" }}
-        >
+      {/* MINIATURAS */}
+{imagenes.length > 1 && (
+  <>
+    <Divider sx={dividerSx} />
+
+    <Stack
+      direction="row"
+      spacing={1}
+      sx={{ px: 1, mt: 1, justifyContent: "center" }}
+    >
           {imagenes.map((img, i) => (
             <Box
               key={i}
