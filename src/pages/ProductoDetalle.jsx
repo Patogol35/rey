@@ -24,7 +24,6 @@ import {
   botonVolverSx,
   imagenContainerSx,
   dividerSx,
-  imagenSx,
   tituloSx,
   precioSx,
   varianteBtnSx,
@@ -53,6 +52,9 @@ export default function ProductoDetalle() {
   const [zoomImage, setZoomImage] = useState("");
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null);
 
+  // 🔥 NUEVO: animación elegante
+  const [fade, setFade] = useState(true);
+
   useEffect(() => {
     const handleMenuOpen = () => {
       setZoomOpen(false);
@@ -64,9 +66,10 @@ export default function ProductoDetalle() {
       window.removeEventListener("menuOpen", handleMenuOpen);
     };
   }, []);
+
   useEffect(() => {
-  window.scrollTo(0, 0);
-}, []);
+    window.scrollTo(0, 0);
+  }, []);
 
   if (!producto) return <Typography>Producto no encontrado</Typography>;
 
@@ -113,13 +116,16 @@ export default function ProductoDetalle() {
     }
   }, [imagenes]);
 
+  // 🔥 CAMBIO CON ANIMACIÓN
   const cambiarImagen = (imgUrl) => {
-    const img = new Image();
-    img.src = imgUrl;
+    if (imgUrl === imagenMostrada) return;
 
-    img.onload = () => {
+    setFade(false);
+
+    setTimeout(() => {
       setImagenMostrada(imgUrl);
-    };
+      setFade(true);
+    }, 150);
   };
 
   const precioActual =
@@ -180,7 +186,20 @@ export default function ProductoDetalle() {
                 setZoomOpen(true);
               }}
             >
-              <Box component="img" src={imagenMostrada} sx={imagenSx} />
+              {/* 🔥 IMAGEN CON ANIMACIÓN */}
+              <Box
+                component="img"
+                src={imagenMostrada}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  borderRadius: "12px",
+                  transition: "opacity 0.3s ease, transform 0.3s ease",
+                  opacity: fade ? 1 : 0,
+                  transform: fade ? "scale(1)" : "scale(0.97)",
+                }}
+              />
             </Box>
 
             {mostrarMiniaturas && (
@@ -191,7 +210,9 @@ export default function ProductoDetalle() {
                     component="img"
                     src={img}
                     onClick={() => cambiarImagen(img)}
-                    sx={(theme) => miniaturaSx(imagenMostrada === img, theme)}
+                    sx={(theme) =>
+                      miniaturaSx(imagenMostrada === img, theme)
+                    }
                   />
                 ))}
               </Box>
@@ -300,4 +321,4 @@ export default function ProductoDetalle() {
       </Dialog>
     </Box>
   );
-        }
+}
