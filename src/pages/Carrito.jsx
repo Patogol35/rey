@@ -39,19 +39,6 @@ export default function Carrito() {
   }, []);
 
   // =========================
-  // BLOQUEAR RENDER MIENTRAS CARGA
-  // =========================
-  if (loading) {
-    return (
-      <Box sx={styles.root}>
-        <Typography align="center" sx={{ mt: 5 }}>
-          Cargando carrito...
-        </Typography>
-      </Box>
-    );
-  }
-
-  // =========================
   // TOTAL
   // =========================
   const total = useMemo(
@@ -115,63 +102,74 @@ export default function Carrito() {
         Mi Carrito
       </Typography>
 
-      {/* VACÍO */}
-      {items.length === 0 && (
-        <Box sx={styles.emptyState}>
-          <RemoveShoppingCartIcon
-            color="disabled"
-            sx={styles.emptyIcon}
-          />
-
-          <Typography variant="h6" sx={styles.emptyTitle(theme)}>
-            Tu carrito está vacío
+      {/* CONTENIDO CONTROLADO */}
+      {loading ? (
+        <Box sx={{ mt: 5 }}>
+          <Typography align="center">
+            Cargando carrito...
           </Typography>
-
-          <Typography variant="body2" sx={styles.emptySubtitle(theme)}>
-            Agrega productos para comenzar tu compra
-          </Typography>
-
-          <Button
-            variant="contained"
-            sx={styles.emptyButton}
-            onClick={() => navigate("/")}
-          >
-            Ir a comprar
-          </Button>
         </Box>
-      )}
+      ) : (
+        <>
+          {/* VACÍO */}
+          {items.length === 0 && (
+            <Box sx={styles.emptyState}>
+              <RemoveShoppingCartIcon
+                color="disabled"
+                sx={styles.emptyIcon}
+              />
 
-      {/* ITEMS */}
-      {items.map((it) => (
-        <CarritoItem
-          key={it.id}
-          it={it}
-          theme={theme}
-          incrementar={incrementar}
-          decrementar={decrementar}
-          setCantidad={setCantidad}
-          eliminarItem={eliminarItem}
-        />
-      ))}
+              <Typography variant="h6" sx={styles.emptyTitle(theme)}>
+                Tu carrito está vacío
+              </Typography>
 
-      {/* FOOTER */}
-      {items.length > 0 && (
-        <Box sx={styles.footerBox(theme)}>
-          <Typography variant="h6" sx={styles.total(theme)}>
-            <MonetizationOnIcon fontSize="small" />
-            Total: {total.toFixed(2)}
-          </Typography>
+              <Typography variant="body2" sx={styles.emptySubtitle(theme)}>
+                Agrega productos para comenzar tu compra
+              </Typography>
 
-          <Button
-            variant="contained"
-            startIcon={<ShoppingCartCheckoutIcon />}
-            sx={styles.button(theme)}
-            onClick={comprar}
-          >
-            Finalizar compra
-          </Button>
-        </Box>
+              <Button
+                variant="contained"
+                sx={styles.emptyButton}
+                onClick={() => navigate("/")}
+              >
+                Ir a comprar
+              </Button>
+            </Box>
+          )}
+
+          {/* ITEMS */}
+          {items.map((it) => (
+            <CarritoItem
+              key={it.id}
+              it={it}
+              theme={theme}
+              incrementar={incrementar}
+              decrementar={decrementar}
+              setCantidad={setCantidad}
+              eliminarItem={eliminarItem}
+            />
+          ))}
+
+          {/* FOOTER */}
+          {items.length > 0 && (
+            <Box sx={styles.footerBox(theme)}>
+              <Typography variant="h6" sx={styles.total(theme)}>
+                <MonetizationOnIcon fontSize="small" />
+                Total: {total.toFixed(2)}
+              </Typography>
+
+              <Button
+                variant="contained"
+                startIcon={<ShoppingCartCheckoutIcon />}
+                sx={styles.button(theme)}
+                onClick={comprar}
+              >
+                Finalizar compra
+              </Button>
+            </Box>
+          )}
+        </>
       )}
     </Box>
   );
-      }
+    }
