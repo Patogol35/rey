@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-
 import {
   Typography,
   Box,
@@ -24,7 +22,6 @@ import styles from "./Carrito.styles";
 
 export default function Carrito() {
   const theme = useTheme();
-
   const {
     items,
     cargarCarrito,
@@ -37,36 +34,13 @@ export default function Carrito() {
   const { access } = useAuth();
   const navigate = useNavigate();
 
-  // ✅ antiflash seguro (sin await)
-  const [initialized, setInitialized] = useState(false);
-
   useEffect(() => {
     cargarCarrito();
     window.scrollTo(0, 0);
-
-    // pequeño delay para evitar flash sin romper loading
-    const timer = setTimeout(() => {
-      setInitialized(true);
-    }, 150);
-
-    return () => clearTimeout(timer);
   }, []);
 
   // =========================
-  // BLOQUEO INICIAL
-  // =========================
-  if (!initialized) {
-    return (
-      <Box sx={styles.root}>
-        <Typography align="center">
-          Cargando carrito...
-        </Typography>
-      </Box>
-    );
-  }
-
-  // =========================
-  // TOTAL
+  //  TOTAL
   // =========================
   const total = useMemo(
     () => items.reduce((acc, it) => acc + calcularSubtotal(it), 0),
@@ -94,10 +68,12 @@ export default function Carrito() {
   };
 
   // =========================
-  // INCREMENTAR
+  //  INCREMENTAR 
   // =========================
   const incrementar = (it) => {
-    const stock = it.variante ? it.variante.stock : 999;
+    const stock = it.variante
+      ? it.variante.stock
+      : 999; // producto sin variantes
 
     if (it.cantidad < stock) {
       setCantidad(it.id, it.cantidad + 1);
@@ -107,7 +83,7 @@ export default function Carrito() {
   };
 
   // =========================
-  // DECREMENTAR
+  //  DECREMENTAR
   // =========================
   const decrementar = (it) => {
     if (it.cantidad > 1) {
@@ -125,86 +101,77 @@ export default function Carrito() {
         align="center"
         sx={styles.header}
       >
-        <ShoppingCartIcon
-          color="primary"
-          sx={styles.headerIcon}
-        />
+        <ShoppingCartIcon color="primary" sx={styles.headerIcon} />
         Mi Carrito
       </Typography>
 
-      {/* CONTENIDO */}
-      {loading ? (
-        <Typography align="center">
-          Cargando carrito...
-        </Typography>
-      ) : items.length === 0 ? (
-        <Box sx={styles.emptyState}>
-          <RemoveShoppingCartIcon
-            color="disabled"
-            sx={styles.emptyIcon}
+      {/* LOADING */}
+      {loading && <Typography>Cargando carrito...</Typography>}
+
+      {/* VACÍO */}
+{!loading && items.length === 0 && (
+  <Box sx={styles.emptyState}>
+    <RemoveShoppingCartIcon
+      color="disabled"
+      sx={styles.emptyIcon}
+    />
+
+    <Typography
+      variant="h6"
+      sx={styles.emptyTitle(theme)}
+    >
+      Tu carrito está vacío
+    </Typography>
+
+    <Typography
+      variant="body2"
+      sx={styles.emptySubtitle(theme)}
+    >
+      Agrega productos para comenzar tu compra
+    </Typography>
+
+    <Button
+      variant="contained"
+      sx={styles.emptyButton}
+      onClick={() => navigate("/")}
+    >
+      Ir a comprar
+    </Button>
+  </Box>
+)}
+
+      {/* ITEMS */}
+      {!loading &&
+        items.map((it) => (
+          <CarritoItem
+            key={it.id}
+            it={it}
+            theme={theme}
+            incrementar={incrementar}
+            decrementar={decrementar}
+            setCantidad={setCantidad}
+            eliminarItem={eliminarItem}
           />
+        ))}
 
-          <Typography
-            variant="h6"
-            sx={styles.emptyTitle(theme)}
-          >
-            Tu carrito está vacío
-          </Typography>
-
-          <Typography
-            variant="body2"
-            sx={styles.emptySubtitle(theme)}
-          >
-            Agrega productos para comenzar tu compra
+      {/* FOOTER */}
+      {!loading && items.length > 0 && (
+        <Box sx={styles.footerBox(theme)}>
+        
+       <Typography variant="h6" sx={styles.total(theme)}>
+            <MonetizationOnIcon fontSize="small" />
+            Total: {total.toFixed(2)}
           </Typography>
 
           <Button
             variant="contained"
-            sx={styles.emptyButton}
-            onClick={() => navigate("/")}
+            startIcon={<ShoppingCartCheckoutIcon />}
+            sx={styles.button(theme)}
+            onClick={comprar}
           >
-            Ir a comprar
+            Finalizar compra
           </Button>
         </Box>
-      ) : (
-        <>
-          {/* ITEMS */}
-          {items.map((it) => (
-            <CarritoItem
-              key={it.id}
-              it={it}
-              theme={theme}
-              incrementar={incrementar}
-              decrementar={decrementar}
-              setCantidad={setCantidad}
-              eliminarItem={eliminarItem}
-            />
-          ))}
-
-          <Divider sx={{ my: 3 }} />
-
-          {/* FOOTER */}
-          <Box sx={styles.footerBox(theme)}>
-            <Typography
-              variant="h6"
-              sx={styles.total(theme)}
-            >
-              <MonetizationOnIcon fontSize="small" />
-              Total: {total.toFixed(2)}
-            </Typography>
-
-            <Button
-              variant="contained"
-              startIcon={
-                <ShoppingCartCheckoutIcon />
-              }
-              sx={styles.button(theme)}
-              onClick={comprar}
-            >
-              Finalizar compra
-            </Button>
-          </Box>
-        </>
       )}
     </Box>
   );
