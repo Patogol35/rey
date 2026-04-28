@@ -13,7 +13,7 @@ const CarritoContext = createContext();
 export function CarritoProvider({ children }) {
   const { access } = useAuth();
   const [carrito, setCarrito] = useState({ items: [] });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   //  CARGAR CARRITO
   const cargarCarrito = async () => {
