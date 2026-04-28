@@ -11,7 +11,6 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {
   Typography,
   Box,
-  Divider,
   Button,
   useTheme,
 } from "@mui/material";
@@ -40,7 +39,20 @@ export default function Carrito() {
   }, []);
 
   // =========================
-  //  TOTAL
+  // BLOQUEAR RENDER MIENTRAS CARGA
+  // =========================
+  if (loading) {
+    return (
+      <Box sx={styles.root}>
+        <Typography align="center" sx={{ mt: 5 }}>
+          Cargando carrito...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // =========================
+  // TOTAL
   // =========================
   const total = useMemo(
     () => items.reduce((acc, it) => acc + calcularSubtotal(it), 0),
@@ -68,12 +80,10 @@ export default function Carrito() {
   };
 
   // =========================
-  //  INCREMENTAR 
+  // INCREMENTAR
   // =========================
   const incrementar = (it) => {
-    const stock = it.variante
-      ? it.variante.stock
-      : 999; // producto sin variantes
+    const stock = it.variante ? it.variante.stock : 999;
 
     if (it.cantidad < stock) {
       setCantidad(it.id, it.cantidad + 1);
@@ -83,7 +93,7 @@ export default function Carrito() {
   };
 
   // =========================
-  //  DECREMENTAR
+  // DECREMENTAR
   // =========================
   const decrementar = (it) => {
     if (it.cantidad > 1) {
@@ -105,60 +115,49 @@ export default function Carrito() {
         Mi Carrito
       </Typography>
 
-      {/* LOADING */}
-      {loading && <Typography>Cargando carrito...</Typography>}
-
       {/* VACÍO */}
-{!loading && items.length === 0 && (
-  <Box sx={styles.emptyState}>
-    <RemoveShoppingCartIcon
-      color="disabled"
-      sx={styles.emptyIcon}
-    />
+      {items.length === 0 && (
+        <Box sx={styles.emptyState}>
+          <RemoveShoppingCartIcon
+            color="disabled"
+            sx={styles.emptyIcon}
+          />
 
-    <Typography
-      variant="h6"
-      sx={styles.emptyTitle(theme)}
-    >
-      Tu carrito está vacío
-    </Typography>
+          <Typography variant="h6" sx={styles.emptyTitle(theme)}>
+            Tu carrito está vacío
+          </Typography>
 
-    <Typography
-      variant="body2"
-      sx={styles.emptySubtitle(theme)}
-    >
-      Agrega productos para comenzar tu compra
-    </Typography>
+          <Typography variant="body2" sx={styles.emptySubtitle(theme)}>
+            Agrega productos para comenzar tu compra
+          </Typography>
 
-    <Button
-      variant="contained"
-      sx={styles.emptyButton}
-      onClick={() => navigate("/")}
-    >
-      Ir a comprar
-    </Button>
-  </Box>
-)}
+          <Button
+            variant="contained"
+            sx={styles.emptyButton}
+            onClick={() => navigate("/")}
+          >
+            Ir a comprar
+          </Button>
+        </Box>
+      )}
 
       {/* ITEMS */}
-      {!loading &&
-        items.map((it) => (
-          <CarritoItem
-            key={it.id}
-            it={it}
-            theme={theme}
-            incrementar={incrementar}
-            decrementar={decrementar}
-            setCantidad={setCantidad}
-            eliminarItem={eliminarItem}
-          />
-        ))}
+      {items.map((it) => (
+        <CarritoItem
+          key={it.id}
+          it={it}
+          theme={theme}
+          incrementar={incrementar}
+          decrementar={decrementar}
+          setCantidad={setCantidad}
+          eliminarItem={eliminarItem}
+        />
+      ))}
 
       {/* FOOTER */}
-      {!loading && items.length > 0 && (
+      {items.length > 0 && (
         <Box sx={styles.footerBox(theme)}>
-        
-       <Typography variant="h6" sx={styles.total(theme)}>
+          <Typography variant="h6" sx={styles.total(theme)}>
             <MonetizationOnIcon fontSize="small" />
             Total: {total.toFixed(2)}
           </Typography>
@@ -175,4 +174,4 @@ export default function Carrito() {
       )}
     </Box>
   );
-}
+      }
