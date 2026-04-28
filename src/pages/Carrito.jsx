@@ -24,6 +24,7 @@ import styles from "./Carrito.styles";
 
 export default function Carrito() {
   const theme = useTheme();
+
   const {
     items,
     cargarCarrito,
@@ -36,21 +37,23 @@ export default function Carrito() {
   const { access } = useAuth();
   const navigate = useNavigate();
 
-  // 🔥 ANTIFLASH
+  // ✅ antiflash seguro (sin await)
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    const init = async () => {
-      await cargarCarrito();
-      setInitialized(true);
-    };
-
-    init();
+    cargarCarrito();
     window.scrollTo(0, 0);
+
+    // pequeño delay para evitar flash sin romper loading
+    const timer = setTimeout(() => {
+      setInitialized(true);
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // =========================
-  //  BLOQUEO TOTAL INICIAL
+  // BLOQUEO INICIAL
   // =========================
   if (!initialized) {
     return (
@@ -63,7 +66,7 @@ export default function Carrito() {
   }
 
   // =========================
-  //  TOTAL
+  // TOTAL
   // =========================
   const total = useMemo(
     () => items.reduce((acc, it) => acc + calcularSubtotal(it), 0),
@@ -122,13 +125,18 @@ export default function Carrito() {
         align="center"
         sx={styles.header}
       >
-        <ShoppingCartIcon color="primary" sx={styles.headerIcon} />
+        <ShoppingCartIcon
+          color="primary"
+          sx={styles.headerIcon}
+        />
         Mi Carrito
       </Typography>
 
-      {/* CONTENIDO CONTROLADO */}
+      {/* CONTENIDO */}
       {loading ? (
-        <Typography align="center">Cargando carrito...</Typography>
+        <Typography align="center">
+          Cargando carrito...
+        </Typography>
       ) : items.length === 0 ? (
         <Box sx={styles.emptyState}>
           <RemoveShoppingCartIcon
@@ -136,11 +144,17 @@ export default function Carrito() {
             sx={styles.emptyIcon}
           />
 
-          <Typography variant="h6" sx={styles.emptyTitle(theme)}>
+          <Typography
+            variant="h6"
+            sx={styles.emptyTitle(theme)}
+          >
             Tu carrito está vacío
           </Typography>
 
-          <Typography variant="body2" sx={styles.emptySubtitle(theme)}>
+          <Typography
+            variant="body2"
+            sx={styles.emptySubtitle(theme)}
+          >
             Agrega productos para comenzar tu compra
           </Typography>
 
@@ -171,14 +185,19 @@ export default function Carrito() {
 
           {/* FOOTER */}
           <Box sx={styles.footerBox(theme)}>
-            <Typography variant="h6" sx={styles.total(theme)}>
+            <Typography
+              variant="h6"
+              sx={styles.total(theme)}
+            >
               <MonetizationOnIcon fontSize="small" />
               Total: {total.toFixed(2)}
             </Typography>
 
             <Button
               variant="contained"
-              startIcon={<ShoppingCartCheckoutIcon />}
+              startIcon={
+                <ShoppingCartCheckoutIcon />
+              }
               sx={styles.button(theme)}
               onClick={comprar}
             >
